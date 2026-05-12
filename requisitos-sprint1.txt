@@ -1,0 +1,191 @@
+================================================================
+  PROJETO WEB — SPRINT 1 (15 dias)
+  Requisitos Mínimos para Entrega
+================================================================
+
+DESCRIÇÃO
+---------
+Desenvolver um sistema web com frontend e backend separados.
+O sistema deve gerenciar duas entidades à sua escolha, com
+operações completas de CRUD em cada uma.
+
+Exemplos de entidades:
+  - Produtos e Categorias
+  - Clientes e Pedidos
+  - Alunos e Turmas
+  - Livros e Autores
+  - Funcionários e Departamentos
+
+
+----------------------------------------------------------------
+TECNOLOGIAS
+----------------------------------------------------------------
+
+Backend:
+  - Qualquer linguagem/framework (recomendo: Python + FastAPI)
+  - Banco de dados: SQLite (ou outro que preferir)
+  - O Swagger (onde se vê as rotas)
+
+Frontend:
+  - Qualquer linguagem/framework (recomendo: HTML + CSS + jQuery)
+  - Bootstrap (obrigatório)
+
+
+----------------------------------------------------------------
+BACKEND — REQUISITOS
+----------------------------------------------------------------
+
+1. Duas entidades com tabelas no banco de dados.
+
+2. Para CADA entidade, implementar as rotas:
+
+   GET    /entidade          → listar todos
+   GET    /entidade/{id}     → buscar por ID
+   POST   /entidade          → criar novo registro
+   PUT    /entidade/{id}     → substituir registro completo
+   DELETE /entidade/{id}     → deletar registro
+
+3. Tratamento de erros obrigatório:
+   - Retornar 404 quando o registro não for encontrado
+   - Retornar 422 para dados inválidos
+   - Não deixar o servidor quebrar por falta de tratamento
+
+4. O Swagger deve estar funcional
+   e mostrar todas as rotas com seus modelos de entrada/saída.
+
+
+----------------------------------------------------------------
+FRONTEND — REQUISITOS
+----------------------------------------------------------------
+
+1. Páginas separadas para cada operação (uma página = uma ação):
+
+   index.html      → listar registros da entidade 1
+   criar.html      → formulário para criar novo registro
+   editar.html     → formulário para editar registro existente
+   (repetir para a entidade 2)
+
+3. Todas as páginas devem usar Bootstrap.
+
+4. Comunicação com o backend via requisições HTTP (fetch ou jQuery $.ajax).
+
+5. Tratamento de erros no frontend:
+   - Exibir mensagem quando o servidor não responder
+   - Exibir mensagem quando um registro não for encontrado
+   - Não deixar a tela em branco sem feedback ao usuário
+
+----------------------------------------------------------------
+CRITÉRIOS DE AVALIAÇÃO — SPRINT 1
+----------------------------------------------------------------
+
+  [ ] Backend rodando sem erros
+  [ ] Duas entidades com tabelas no banco
+  [ ] Rotas GET, POST, PUT e DELETE funcionando
+  [ ] Erros retornam status HTTP correto (404, 422...)
+  [ ] Swagger acessível e documentando todas as rotas
+  [ ] Frontend com páginas separadas por operação
+  [ ] Navegação entre páginas funcionando
+  [ ] Bootstrap aplicado em todas as páginas
+  [ ] Frontend se comunica com o backend (requisições reais)
+  [ ] Feedback de erro visível ao usuário no frontend
+
+
+----------------------------------------------------------------
+GIT E GITHUB — REGRAS OBRIGATÓRIAS
+----------------------------------------------------------------
+
+ATENÇÃO: O uso correto do Git faz parte da nota.
+Commits diretos na branch main serão desconsiderados.
+
+  1. REPOSITÓRIO
+     - Criar um repositório público no GitHub
+     - Adicionar todos os integrantes do grupo como colaboradores
+     - Todo integrante deve ter ao menos um commit no repositório
+       (commits só de uma pessoa = trabalho individual, não em grupo)
+
+  2. BRANCHES — NUNCA commite direto na main
+     - A branch main é a versão "oficial" e estável do projeto
+     - Para cada funcionalidade nova, crie uma branch separada:
+
+         git checkout -b listar-produtos
+         git checkout -b criar-cliente
+         git checkout -b erro-no-formulario
+
+     - Nomes sugeridos: nome-da-funcionalidade
+                        nome-do-bug
+
+  3. COMMITS
+     - Faça commits pequenos e frequentes (não acumule tudo)
+     - Escreva mensagens que descrevam o que foi feito:
+
+         BOM:  "adiciona formulário de criação de produto"
+         RUIM: "atualizando" / "ajustes" / "commit"
+
+     - Para commitar e enviar sua branch:
+
+         git add .
+         git commit -m "sua mensagem aqui"
+         git push origin nome-da-branch
+
+  4. PULL REQUEST (PR)
+     - Quando a funcionalidade estiver pronta, abra um Pull Request
+       no GitHub para mesclar sua branch na main.
+     - Como abrir: GitHub → aba "Pull requests" → "New pull request"
+       → selecione sua branch → clique em "Create pull request"
+     - Descreva no PR o que foi feito e o que o revisor deve testar.
+
+  5. REVISÃO DE CÓDIGO — obrigatório
+     - O Pull Request NÃO pode ser aprovado pelo próprio autor.
+     - O OUTRO integrante do grupo deve revisar o código:
+         * Leia o que foi alterado
+         * Aprove clicando em "Approve" ou peça ajustes em "Request changes"
+     - Somente após aprovação, faça o merge clicando em "Merge pull request"
+
+  Fluxo resumido:
+  ┌─────────────────────────────────────────────────────────┐
+  │  cria branch → commita → push → abre PR → outro revisa  │
+  │                       → aprova → merge na main          │
+  └─────────────────────────────────────────────────────────┘
+
+
+----------------------------------------------------------------
+CRITÉRIOS DE AVALIAÇÃO — SPRINT 1
+----------------------------------------------------------------
+
+  [ ] Backend rodando sem erros
+  [ ] Duas entidades com tabelas no banco
+  [ ] Rotas GET, POST, PUT e DELETE funcionando
+  [ ] Erros retornam status HTTP correto (404, 422...)
+  [ ] Swagger acessível e documentando todas as rotas
+  [ ] Frontend com páginas separadas por operação
+  [ ] Navegação entre páginas funcionando
+  [ ] Bootstrap aplicado em todas as páginas
+  [ ] Frontend se comunica com o backend (requisições reais)
+  [ ] Feedback de erro visível ao usuário no frontend
+  [ ] Repositório público no GitHub
+  [ ] Todos os integrantes com commits no repositório
+  [ ] Nenhum commit direto na branch main
+  [ ] Ao menos um Pull Request aberto e mergeado por integrante
+  [ ] Pull Requests revisados pelo outro integrante
+
+
+----------------------------------------------------------------
+ENTREGA
+----------------------------------------------------------------
+
+  - Repositório público no GitHub com histórico de commits e PRs
+  - README com instruções de como rodar o projeto
+  - Demonstração funcionando (backend + frontend rodando juntos)
+  - Prazo: 15 dias a partir da data de início
+
+
+----------------------------------------------------------------
+OBSERVAÇÕES
+----------------------------------------------------------------
+  - Não é obrigatório deploy em servidor. Rodar localmente está ok.
+
+  - Sprints seguintes adicionarão novos requisitos sobre este mesmo
+    projeto (autenticação, validações avançadas, melhorias de UX etc.)
+    Portanto, organize bem o código desde o início.
+
+================================================================
