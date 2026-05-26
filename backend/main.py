@@ -4,11 +4,11 @@ from sqlalchemy.orm import Session
 
 import crud
 from database import Base, engine, get_db
-from schemas import TarefaCreate, TarefaResponse, TarefaUpdate
+from schemas import (ProdutoCreate, ProdutoUpdate, ProdutoResponse, PedidoCreate, PedidoUpdate, PedidoResponse)
 
-Base.metadata.create_all(bind=engine)  # cria as tabelas ao iniciar
+Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="API de Tarefas — Parte 3 (SQLite)")
+app = FastAPI(title="WF Restaurant , vesion=0.0.1")
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,44 +17,85 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/produtos", response_model=list[ProdutoResponse])
+def listar_produtos(db: Session = Depends(get_db)):
+    return crud.listar_produtos(db)
 
-@app.get("/tarefas", response_model=list[TarefaResponse])
-def listar(db: Session = Depends(get_db)):
-    return crud.listar_tarefas(db)
+@app.get("/produtos/{produto_id}", response_model=ProdutoResponse)
+def buscar_produto(
+    produto_id: int,
+    db: Session = Depends(get_db)):
+    produto = crud.buscar_produto(db, produto_id)
+    if not produto:
+        raise HTTPException(status_code=404,
+        detail="Produto nao encontrado")
+    return produto
 
+@app.post("/produtos", response_model=ProdutoResponse, status_code=201)
+def criar_produto(
+    dados: ProdutoCreate,
+    db: Session = Depends(get_db)):
+    return crud.criar_produto(db, dados)
 
-@app.get("/tarefas/{tarefa_id}", response_model=TarefaResponse)
-def buscar(tarefa_id: int, db: Session = Depends(get_db)):
-    tarefa = crud.buscar_tarefa(db, tarefa_id)
-    if not tarefa:
-        raise HTTPException(status_code=404, detail="Tarefa nao encontrada")
-    return tarefa
+@app.put("/produtos/{produto_id}", response_model=ProdutoResponse)
+def atualizar_produto(
+    produto_id: int,
+    dados: ProdutoCreate,
+    db: Session = Depends(get_db)): 
+    produto = crud.atualizar_produto(db, produto_id, dados)
+    if not produto:
+        raise HTTPException(status_code=404,detail="Produto nao encontrado")
+    return produto  
 
+@app.delete("/produtos/{produto_id}", status_code=204)
+def deletar_produto(
+    produto_id: int,
+    db: Session = Depends(get_db)):
+    produto = crud.deletar_produto(db, produto_id)
+    if not produto:
+        raise HTTPException(status_code=404,detail="Produto nao encontrado")
 
-@app.post("/tarefas", response_model=TarefaResponse, status_code=201)
-def criar(dados: TarefaCreate, db: Session = Depends(get_db)):
-    return crud.criar_tarefa(db, dados)
+# =======================================================================================
 
+@app.get("/pedidos", response_model=list[PedidoResponse])
+def listar_pedidos(db: Session = Depends(get_db)):
+    return crud.listar_pedidos(db)
 
-@app.put("/tarefas/{tarefa_id}", response_model=TarefaResponse)
-def substituir(tarefa_id: int, dados: TarefaCreate,
-               db: Session = Depends(get_db)):
-    tarefa = crud.substituir_tarefa(db, tarefa_id, dados)
-    if not tarefa:
-        raise HTTPException(status_code=404, detail="Tarefa nao encontrada")
-    return tarefa
+@app.get("/pedidos/{pedido_id}", response_model=PedidoResponse)
+def buscar_pedido(
+    pedido_id: int,
+    db: Session = Depends(get_db)):
+    pedido = crud.buscar_pedido(db, pedido_id)
+    if not pedido:
+        raise HTTPException(
+            status_code=404,
+            detail="Pedido nao encontrado")
+    return pedido
 
+@app.post("/pedidos", response_model=PedidoResponse, status_code=201)
+def criar_pedido(
+    dados: PedidoCreate,
+    db: Session = Depends(get_db)):
+    return crud.criar_pedido(db, dados)
 
-@app.patch("/tarefas/{tarefa_id}", response_model=TarefaResponse)
-def atualizar(tarefa_id: int, dados: TarefaUpdate,
-              db: Session = Depends(get_db)):
-    tarefa = crud.atualizar_tarefa(db, tarefa_id, dados)
-    if not tarefa:
-        raise HTTPException(status_code=404, detail="Tarefa nao encontrada")
-    return tarefa
+@app.put("/pedidos/{pedido_id}", response_model=PedidoResponse)
+def atualizar_pedido(
+    pedido_id: int,
+    dados: PedidoUpdate,
+    db: Session = Depends(get_db)):
+    pedido = crud.atualizar_pedido(db, pedido_id, dados)
+    if not pedido:
+        raise HTTPException(
+            status_code=404,
+            detail="Pedido nao encontrado")
+    return pedido
 
-
-@app.delete("/tarefas/{tarefa_id}", status_code=204)
-def deletar(tarefa_id: int, db: Session = Depends(get_db)):
-    print(tarefa_id)
-    crud.deletar_tarefa(db, tarefa_id)
+@app.delete("/pedidos/{pedido_id}", status_code=204)
+def deletar_pedido(
+    pedido_id: int,
+    db: Session = Depends(get_db)):
+    pedido = crud.deletar_pedido(db, pedido_id)
+    if not pedido:
+        raise HTTPException(
+            status_code=404,
+            detail="Pedido nao encontrado")

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar Produto — WF Restaurant</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-title">🍽️ WF Restaurant</div>
+  <a href="index.html" data-p="pedidos">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+    Pedidos
+  </a>
+  <a href="cardapio.html" data-p="cardapio">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+    Cardápio
+  </a>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <h1>Editar Produto <span id="topbar-id" style="color:var(--muted); font-size:14px; font-weight:400;"></span></h1>
+      <small>Atualizar dados do produto</small>
+    </div>
+    <a href="cardapio.html" class="btn btn-secondary btn-sm">← Voltar</a>
+  </div>
+
+  <div class="content">
+    <div class="row g-4">
+
+      <!-- Formulário -->
+      <div class="col-md-7">
+        <div class="card">
+          <div class="card-body">
+
+            <div class="mb-3">
+              <label class="form-label">Nome do Prato *</label>
+              <input id="nome" class="form-control"/>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Descrição</label>
+              <input id="descricao" class="form-control"/>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Preço (R$) *</label>
+              <input id="preco" class="form-control" type="number" step="0.01" min="0"/>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">URL da Imagem</label>
+              <input id="imagem" class="form-control" placeholder="https://..."/>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label d-block">Disponível no cardápio</label>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="disponivel"/>
+                <label class="form-check-label" for="disponivel" id="disp-label" style="color:var(--muted)">Não</label>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2 justify-content-end mt-3">
+              <a href="cardapio.html" class="btn btn-secondary btn-sm">Cancelar</a>
+              <button id="btn-salvar" class="btn btn-primary btn-sm" onclick="salvar()">Salvar Alterações</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="col-md-5">
+        <p style="color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px;">Preview</p>
+        <div class="produto-preview">
+          <div class="produto-preview-img" id="prev-img">🍽️</div>
+          <div class="produto-preview-body">
+            <div style="font-weight:600; margin-bottom:4px;" id="prev-nome">—</div>
+            <div style="color:var(--muted); font-size:12px; margin-bottom:10px;" id="prev-desc">—</div>
+            <div class="d-flex justify-content-between align-items-center">
+              <strong style="color:var(--accent)" id="prev-preco">—</strong>
+              <span class="badge" id="prev-badge">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="utils.js"></script>
+<script>
+  navAtivo("cardapio");
+  const id = new URLSearchParams(location.search).get("id");
+  if (!id) location.href = "cardapio.html";
+  $("#topbar-id").text(`#${id}`);
+
+  function sincBadge(disp) {
+    if (disp) {
+      $("#disp-label").text("Sim");
+      $("#prev-badge").removeClass("bg-danger").addClass("bg-success").text("Disponível");
+    } else {
+      $("#disp-label").text("Não");
+      $("#prev-badge").removeClass("bg-success").addClass("bg-danger").text("Indisponível");
+    }
+  }
+
+  $.get(`${API}/produtos/${id}`, function(p) {
+    $("#nome").val(p.nome);
+    $("#descricao").val(p.descricao);
+    $("#preco").val(p.preco);
+    $("#imagem").val(p.imagem || "");
+    $("#disponivel").prop("checked", p.disponivel);
+
+    // preview inicial
+    $("#prev-nome").text(p.nome);
+    $("#prev-desc").text(p.descricao || "Sem descrição");
+    $("#prev-preco").text(brl(p.preco));
+    if (p.imagem) $("#prev-img").html(`<img src="${p.imagem}" onerror="this.parentElement.html('🍽️')"/>`);
+    sincBadge(p.disponivel);
+  }).fail(() => {
+    toast("Produto não encontrado", "err");
+    setTimeout(() => location.href = "cardapio.html", 1200);
+  });
+
+  // Live preview
+  $("#nome").on("input", function()     { $("#prev-nome").text($(this).val() || "—"); });
+  $("#descricao").on("input", function(){ $("#prev-desc").text($(this).val() || "—"); });
+  $("#preco").on("input", function()    { $("#prev-preco").text(brl(parseFloat($(this).val()) || 0)); });
+  $("#imagem").on("input", function() {
+    const url = $(this).val().trim();
+    $("#prev-img").html(url ? `<img src="${url}" onerror="this.parentElement.html('🍽️')"/>` : "🍽️");
+  });
+  $("#disponivel").on("change", function() { sincBadge($(this).is(":checked")); });
+
+  function salvar() {
+    const nome      = $("#nome").val().trim();
+    const descricao = $("#descricao").val().trim();
+    const preco     = parseFloat($("#preco").val());
+    const imagem    = $("#imagem").val().trim();
+    const disponivel= $("#disponivel").is(":checked");
+
+    if (!nome || isNaN(preco) || preco <= 0) {
+      toast("Preencha nome e preço válidos", "err");
+      return;
+    }
+
+    $("#btn-salvar").prop("disabled", true).text("Salvando...");
+
+    $.ajax({
+      url: `${API}/produtos/${id}`,
+      method: "PUT",
+      contentType: "application/json",
+      data: JSON.stringify({ nome, descricao, preco, disponivel, imagem }),
+      success() {
+        toast("Produto atualizado!");
+        setTimeout(() => location.href = "cardapio.html", 900);
+      },
+      error() {
+        toast("Erro ao atualizar", "err");
+        $("#btn-salvar").prop("disabled", false).text("Salvar Alterações");
+      }
+    });
+  }
+</script>
+</body>
+</html>

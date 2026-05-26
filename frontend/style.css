@@ -1,4 +1,160 @@
-.riscado {
-  text-decoration: line-through;
-  color: #6c757d;
+:root {
+  --bg: #0f1117;
+  --card: #181c27;
+  --border: #252a3a;
+  --accent: #f97316;
+  --input: #1a1e2e;
+  --muted: #8b92a9;
+  --sidebar-w: 220px;
 }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: #f1f3f9;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: #13161f;
+  border-right: 1px solid var(--border);
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-title {
+  font-size: 15px;
+  font-weight: 600;
+  padding: 8px 10px 16px;
+  color: #f1f3f9;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13.5px;
+  transition: all 0.15s;
+}
+
+.sidebar a:hover { background: var(--card); color: #f1f3f9; }
+.sidebar a.active { background: rgba(249,115,22,0.15); color: var(--accent); }
+
+/* MAIN */
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+}
+
+.topbar {
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar h1 { font-size: 18px; font-weight: 600; }
+.topbar small { color: var(--muted); font-size: 12px; }
+
+.content { padding: 24px 28px; }
+
+/* BOOTSTRAP OVERRIDES - dark */
+.card {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  color: #f1f3f9 !important;
+}
+
+.table {
+  color: #f1f3f9 !important;
+  border-color: var(--border) !important;
+}
+
+.table thead th {
+  background: #13161f !important;
+  color: var(--muted) !important;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  border-color: var(--border) !important;
+}
+
+.table tbody td { border-color: var(--border) !important; vertical-align: middle; }
+.table tbody tr:hover { background: #e2e3e7 !important; }
+
+.form-control, .form-select {
+  background: var(--input) !important;
+  border-color: var(--border) !important;
+  color: #f1f3f9 !important;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(249,115,22,0.2) !important;
+}
+
+.form-control::placeholder { color: var(--muted) !important; }
+.form-select option { background: var(--card); }
+.form-label { color: var(--muted); font-size: 12px; font-weight: 500; }
+
+.btn-primary { background: var(--accent) !important; border-color: var(--accent) !important; }
+.btn-primary:hover { background: #fb923c !important; border-color: #fb923c !important; }
+
+/* STAT CARDS */
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+.stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.stat-num { font-size: 22px; font-weight: 700; }
+.stat-num.orange { color: var(--accent); }
+.stat-num.green  { color: #22c55e; }
+.stat-num.blue   { color: #3b82f6; }
+
+/* PRODUTO CARD (preview) */
+.produto-preview {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.produto-preview-img {
+  width: 100%; height: 120px;
+  background: var(--input);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; color: var(--muted);
+}
+.produto-preview-img img { width: 100%; height: 100%; object-fit: cover; }
+.produto-preview-body { padding: 12px; }
+
+/* MODAL override */
+.modal-content {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  color: #f1f3f9 !important;
+}
+.modal-header, .modal-footer { border-color: var(--border) !important; }
+
+/* TOAST */
+.toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; }
+.toast { background: var(--card) !important; border: 1px solid var(--border) !important; color: #f1f3f9 !important; }
+.toast.ok  { border-left: 3px solid #22c55e !important; }
+.toast.err { border-left: 3px solid #ef4444 !important; }

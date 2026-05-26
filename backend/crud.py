@@ -1,54 +1,68 @@
 from sqlalchemy.orm import Session
-from models import Tarefa
-from schemas import TarefaCreate, TarefaUpdate
+from models import Produto, Pedido
+from schemas import (ProdutoCreate,ProdutoUpdate,PedidoCreate,PedidoUpdate)
 
+def listar_produtos(db: Session):
+    return db.query(Produto).all()
 
-def listar_tarefas(db: Session):
-    return db.query(Tarefa).all()
+def buscar_produto(db: Session, produto_id: int):
+    return db.query(Produto).filter(Produto.id == produto_id).first()
 
-
-def buscar_tarefa(db: Session, tarefa_id: int):
-    return db.query(Tarefa).filter(Tarefa.id == tarefa_id).first()
-
-
-def criar_tarefa(db: Session, dados: TarefaCreate):
-    tarefa = Tarefa(**dados.model_dump())
-    db.add(tarefa)
+def criar_produto(db: Session, dados: ProdutoCreate):
+    produto = Produto(**dados.model_dump())
+    db.add(produto)
     db.commit()
-    db.refresh(tarefa)
-    return tarefa
+    db.refresh(produto)
+    return produto
 
-
-def atualizar_tarefa(db: Session, tarefa_id: int, dados: TarefaUpdate):
-    tarefa = buscar_tarefa(db, tarefa_id)
-    if not tarefa:
+def atualizar_produto(db: Session, produto_id: int, dados: ProdutoCreate):
+    produto = buscar_produto(db, produto_id)
+    if not produto:
         return None
     atualizacoes = dados.model_dump(exclude_unset=True)
     for campo, valor in atualizacoes.items():
-        # tarefa.campo = valor
-        setattr(tarefa, campo, valor)
+        setattr(produto, campo, valor)
     db.commit()
-    db.refresh(tarefa)
-    return tarefa
+    db.refresh(produto)
+    return produto
 
-
-def substituir_tarefa(db: Session, tarefa_id: int, dados: TarefaCreate):
-    tarefa = buscar_tarefa(db, tarefa_id)
-    if not tarefa:
-        return None
-    tarefa.titulo    = dados.titulo
-    tarefa.descricao = dados.descricao
-    tarefa.concluida = False
-    db.commit()
-    db.refresh(tarefa)
-    return tarefa
-
-
-def deletar_tarefa(db: Session, tarefa_id: int):
-    tarefa = buscar_tarefa(db, tarefa_id)
-    if tarefa:
-        db.delete(tarefa)
+def deletar_produto(db: Session, produto_id: int):
+    produto = buscar_produto(db, produto_id)
+    if produto:
+        db.delete(produto)
         db.commit()
-    else:
-        print(f"Tarefa {tarefa_id} nao encontrada para deletar.")
-    return tarefa
+    return produto
+
+# ==========================================================================================
+
+def listar_pedidos(db: Session):
+    return db.query(Pedido).all()
+
+def buscar_pedido(db: Session, pedido_id: int):
+    return db.query(Pedido).filter(Pedido.id == pedido_id).first()
+
+def criar_pedido(db: Session, dados: PedidoCreate):
+    pedido = Pedido(**dados.model_dump())
+    db.add(pedido)
+    db.commit()
+    db.refresh(pedido)
+    return pedido
+
+def atualizar_pedido(db: Session, pedido_id: int, dados: PedidoUpdate):
+    pedido = buscar_pedido(db, pedido_id)
+    if not pedido:
+        return None
+    atualizacoes = dados.model_dump(exclude_unset=True)
+    for campo, valor in atualizacoes.items():
+        setattr(pedido, campo, valor)
+    db.commit()
+    db.refresh(pedido)
+    return pedido
+
+def deletar_pedido(db: Session, pedido_id: int):
+    pedido = buscar_pedido(db, pedido_id)
+    if pedido:
+        db.delete(pedido)
+        db.commit()
+
+    return pedido

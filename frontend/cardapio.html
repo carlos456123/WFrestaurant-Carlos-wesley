@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pedidos — WF Restaurant</title>
+  <title>Cardápio — WF Restaurant</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
@@ -24,55 +24,23 @@
 <div class="main">
   <div class="topbar">
     <div>
-      <h1>Pedidos</h1>
-      <small>Área administrativa</small>
+      <h1>Cardápio</h1>
+      <small>Gerenciar produtos</small>
     </div>
-    <a href="criar-pedido.html" class="btn btn-primary btn-sm">+ Novo Pedido</a>
+    <a href="criar-produto.html" class="btn btn-primary btn-sm">+ Novo Produto</a>
   </div>
 
   <div class="content">
-
-    <!-- Stats -->
-    <div class="row g-3 mb-4">
-      <div class="col-6 col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Total</div>
-          <div class="stat-num" id="s-total">—</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Preparando</div>
-          <div class="stat-num orange" id="s-prep">—</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Prontos</div>
-          <div class="stat-num green" id="s-pronto">—</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Entregues</div>
-          <div class="stat-num blue" id="s-entregue">—</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabela -->
     <div class="card">
       <div class="card-body p-0">
         <table class="table table-hover mb-0">
           <thead>
             <tr>
               <th>#</th>
-              <th>Cliente</th>
-              <th>Telefone</th>
-              <th>Produto</th>
-              <th>Qtd</th>
-              <th>Total</th>
-              <th>Status</th>
+              <th>Nome</th>
+              <th>Descrição</th>
+              <th>Preço</th>
+              <th>Disponível</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -80,7 +48,6 @@
         </table>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -89,10 +56,10 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Excluir pedido?</h5>
+        <h5 class="modal-title">Excluir produto?</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body" style="color:var(--muted)">Essa ação não pode ser desfeita.</div>
+      <div class="modal-body" style="color:var(--muted)">O produto será removido do cardápio.</div>
       <div class="modal-footer">
         <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
         <button class="btn btn-danger btn-sm" id="btn-del">Excluir</button>
@@ -105,44 +72,35 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="utils.js"></script>
 <script>
-  navAtivo("pedidos");
+  navAtivo("cardapio");
   let delId = null;
   const modal = new bootstrap.Modal(document.getElementById("modal-del"));
 
   function carregar() {
-    $("#tbody").html('<tr><td colspan="8" class="text-center py-4" style="color:var(--muted)">Carregando...</td></tr>');
+    $("#tbody").html('<tr><td colspan="6" class="text-center py-4" style="color:var(--muted)">Carregando...</td></tr>');
 
-    $.get(`${API}/pedidos`, function(lista) {
-      // stats
-      $("#s-total").text(lista.length);
-      $("#s-prep").text(lista.filter(p => p.status === "Preparando").length);
-      $("#s-pronto").text(lista.filter(p => p.status === "Pronto").length);
-      $("#s-entregue").text(lista.filter(p => p.status === "Entregue").length);
-
+    $.get(`${API}/produtos`, function(lista) {
       if (!lista.length) {
-        $("#tbody").html('<tr><td colspan="8" class="text-center py-4" style="color:var(--muted)">Nenhum pedido cadastrado.</td></tr>');
+        $("#tbody").html('<tr><td colspan="6" class="text-center py-4" style="color:var(--muted)">Nenhum produto cadastrado.</td></tr>');
         return;
       }
-
       let html = "";
       lista.forEach(p => {
         html += `<tr>
           <td style="color:var(--muted)">#${p.id}</td>
-          <td>${p.nome_cliente}</td>
-          <td style="color:var(--muted)">${p.telefone}</td>
-          <td>${p.produto}</td>
-          <td>${p.quantidade}</td>
-          <td style="color:var(--accent);font-weight:600">${brl(p.valor_total)}</td>
-          <td>${badgePedido(p.status)}</td>
+          <td><strong>${p.nome}</strong></td>
+          <td style="color:var(--muted)">${p.descricao || '—'}</td>
+          <td style="color:var(--accent); font-weight:600">${brl(p.preco)}</td>
+          <td>${badgeDisp(p.disponivel)}</td>
           <td>
-            <a href="editar-pedido.html?id=${p.id}" class="btn btn-outline-secondary btn-sm me-1">Editar</a>
+            <a href="editar-produto.html?id=${p.id}" class="btn btn-outline-secondary btn-sm me-1">Editar</a>
             <button class="btn btn-outline-danger btn-sm btn-excluir" data-id="${p.id}">Excluir</button>
           </td>
         </tr>`;
       });
       $("#tbody").html(html);
     }).fail(() => {
-      $("#tbody").html('<tr><td colspan="8" class="text-center py-4 text-danger">Erro ao carregar.</td></tr>');
+      $("#tbody").html('<tr><td colspan="6" class="text-center py-4 text-danger">Erro ao carregar.</td></tr>');
     });
   }
 
@@ -153,11 +111,11 @@
 
   $("#btn-del").on("click", function() {
     $.ajax({
-      url: `${API}/pedidos/${delId}`,
+      url: `${API}/produtos/${delId}`,
       method: "DELETE",
       success() {
         modal.hide();
-        toast("Pedido excluído");
+        toast("Produto excluído");
         carregar();
       },
       error() { toast("Erro ao excluir", "err"); }
