@@ -1,170 +1,99 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pedidos — WF Restaurant</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WF Restaurant</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<aside class="sidebar">
-  <div class="sidebar-title">🍽️ WF Restaurant</div>
-  <a href="index.html" data-p="pedidos">
-    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
-    Pedidos
-  </a>
-  <a href="cardapio.html" data-p="cardapio">
-    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
-    Cardápio
-  </a>
-</aside>
-
-<div class="main">
-  <div class="topbar">
-    <div>
-      <h1>Pedidos</h1>
-      <small>Área administrativa</small>
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark mb-4">
+  <div class="container">
+    <span class="navbar-brand">🍽️ WF Restaurant</span>
+    <div class="d-flex gap-2">
+      <a href="pedidos/index.html" class="btn btn-light btn-sm">Pedidos</a>
+      <a href="criar/index.html" class="btn btn-warning btn-sm">+ Novo Prato</a>
     </div>
-    <a href="criar-pedido.html" class="btn btn-primary btn-sm">+ Novo Pedido</a>
   </div>
+</nav>
 
-  <div class="content">
+<!-- CONTEÚDO -->
+<div class="container">
+  <div class="row">
 
-    <!-- Stats -->
-    <div class="row g-3 mb-4">
-      <div class="col-6 col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Total</div>
-          <div class="stat-num" id="s-total">—</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Preparando</div>
-          <div class="stat-num orange" id="s-prep">—</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Prontos</div>
-          <div class="stat-num green" id="s-pronto">—</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Entregues</div>
-          <div class="stat-num blue" id="s-entregue">—</div>
-        </div>
-      </div>
+    <!-- LISTA DE PRATOS -->
+    <div class="col-lg-8">
+      <div id="lista" class="row g-4"></div>
     </div>
 
-    <!-- Tabela -->
-    <div class="card">
-      <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Cliente</th>
-              <th>Telefone</th>
-              <th>Produto</th>
-              <th>Qtd</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
+    <!-- PEDIDO ATUAL -->
+    <div class="col-lg-4">
+      <div class="box-pedido shadow-sm">
+        <h4>🧾 Pedido Atual</h4>
+
+        <div id="pedido-lista">
+          <p class="text-muted">Nenhum item no pedido.</p>
+        </div>
+
+        <hr>
+
+        <h5>Total: <span id="total">R$ 0,00</span></h5>
+
+        <!-- BOTÃO FINALIZAR -->
+        <button
+          class="btn btn-vermelho w-100 mt-2"
+          id="btn-finalizar"
+          data-bs-toggle="modal"
+          data-bs-target="#modal-pedido"
+          disabled
+        >
+          Finalizar Pedido
+        </button>
+
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- Modal delete -->
-<div class="modal fade" id="modal-del" tabindex="-1">
+<!-- MODAL: dados do cliente -->
+<div class="modal fade" id="modal-pedido" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Excluir pedido?</h5>
+
+      <div class="modal-header" style="background-color:#8b0000;">
+        <h5 class="modal-title text-white">Identificação do Cliente</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body" style="color:var(--muted)">Essa ação não pode ser desfeita.</div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-        <button class="btn btn-danger btn-sm" id="btn-del">Excluir</button>
+
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Nome *</label>
+          <input id="cli-nome" class="form-control" placeholder="Ex: João Silva"/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Telefone *</label>
+          <input id="cli-telefone" class="form-control" placeholder="(11) 99999-9999"/>
+        </div>
       </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-vermelho" id="btn-confirmar">Confirmar Pedido</button>
+      </div>
+
     </div>
   </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="utils.js"></script>
-<script>
-  navAtivo("pedidos");
-  let delId = null;
-  const modal = new bootstrap.Modal(document.getElementById("modal-del"));
+<script src="index.js"></script>
 
-  function carregar() {
-    $("#tbody").html('<tr><td colspan="8" class="text-center py-4" style="color:var(--muted)">Carregando...</td></tr>');
-
-    $.get(`${API}/pedidos`, function(lista) {
-      // stats
-      $("#s-total").text(lista.length);
-      $("#s-prep").text(lista.filter(p => p.status === "Preparando").length);
-      $("#s-pronto").text(lista.filter(p => p.status === "Pronto").length);
-      $("#s-entregue").text(lista.filter(p => p.status === "Entregue").length);
-
-      if (!lista.length) {
-        $("#tbody").html('<tr><td colspan="8" class="text-center py-4" style="color:var(--muted)">Nenhum pedido cadastrado.</td></tr>');
-        return;
-      }
-
-      let html = "";
-      lista.forEach(p => {
-        html += `<tr>
-          <td style="color:var(--muted)">#${p.id}</td>
-          <td>${p.nome_cliente}</td>
-          <td style="color:var(--muted)">${p.telefone}</td>
-          <td>${p.produto}</td>
-          <td>${p.quantidade}</td>
-          <td style="color:var(--accent);font-weight:600">${brl(p.valor_total)}</td>
-          <td>${badgePedido(p.status)}</td>
-          <td>
-            <a href="editar-pedido.html?id=${p.id}" class="btn btn-outline-secondary btn-sm me-1">Editar</a>
-            <button class="btn btn-outline-danger btn-sm btn-excluir" data-id="${p.id}">Excluir</button>
-          </td>
-        </tr>`;
-      });
-      $("#tbody").html(html);
-    }).fail(() => {
-      $("#tbody").html('<tr><td colspan="8" class="text-center py-4 text-danger">Erro ao carregar.</td></tr>');
-    });
-  }
-
-  $(document).on("click", ".btn-excluir", function() {
-    delId = $(this).data("id");
-    modal.show();
-  });
-
-  $("#btn-del").on("click", function() {
-    $.ajax({
-      url: `${API}/pedidos/${delId}`,
-      method: "DELETE",
-      success() {
-        modal.hide();
-        toast("Pedido excluído");
-        carregar();
-      },
-      error() { toast("Erro ao excluir", "err"); }
-    });
-  });
-
-  carregar();
-</script>
 </body>
 </html>
