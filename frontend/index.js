@@ -21,6 +21,7 @@ function atualizarPedido() {
         `;
     }
 
+
     if (pedido.length === 0) {
         html = `<p class="text-muted">Nenhum item no pedido.</p>`;
     }
@@ -31,6 +32,24 @@ function atualizarPedido() {
     // Habilita ou desabilita o botão de finalizar
     $("#btn-finalizar").prop("disabled", pedido.length === 0);
 }
+// Máscara de telefone — formata enquanto digita
+$("#cli-telefone").on("input", function() {
+    let v = $(this).val().replace(/\D/g, ""); // remove tudo que não é número
+    if (v.length > 11) v = v.slice(0, 11);    // limita a 11 dígitos
+
+    if (v.length > 6) {
+        v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+    } else if (v.length > 2) {
+        v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+    } else if (v.length > 0) {
+        v = `(${v}`;
+    }
+
+    $(this).val(v);
+
+});
+
+
 
 /* ADICIONA OU INCREMENTA ITEM NO PEDIDO */
 function adicionarPedido(produto) {
