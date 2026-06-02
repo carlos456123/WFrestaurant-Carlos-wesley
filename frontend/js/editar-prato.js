@@ -1,32 +1,32 @@
-const API = "http://localhost:8000";
+const id = getIdDaUrl();
 
-const id = new URLSearchParams(window.location.search).get("id");
-
-if (!id) window.location.href = "../cardapio/index.html";
+if (!id) window.location.href = "cardapio-admin.html";
 
 $("#titulo-id").text(`#${id}`);
 
-// Carrega os dados do prato
+// ─── CARREGAR DADOS DO PRATO ────────────────────────────
 $.get(`${API}/produtos/${id}`, function(p) {
     $("#nome").val(p.nome);
     $("#descricao").val(p.descricao);
     $("#preco").val(p.preco);
-    $("#disponivel").val(String(p.disponivel)); // "true" ou "false"
+    $("#disponivel").val(String(p.disponivel));
 }).fail(() => {
-    alert("Prato não encontrado.");
-    window.location.href = "../cardapio-admin/cardapio-admin.html";
+    avisar("Prato não encontrado.");
+    window.location.href = "cardapio-admin.html";
 });
 
+// ─── SALVAR ALTERAÇÕES ──────────────────────────────────
 function salvar() {
     const dados = {
         nome:       $("#nome").val().trim(),
         descricao:  $("#descricao").val().trim(),
         preco:      parseFloat($("#preco").val()),
-        disponivel: $("#disponivel").val() === "true"
+        disponivel: $("#disponivel").val() === "true",
+        imagem:     ""
     };
 
     if (!dados.nome || isNaN(dados.preco)) {
-        alert("Preencha nome e preço!");
+        avisar("Preencha nome e preço!");
         return;
     }
 
@@ -38,11 +38,11 @@ function salvar() {
         contentType: "application/json",
         data: JSON.stringify(dados),
         success() {
-            alert("Prato atualizado!");
-            window.location.href = "../cardapio-admin/cardapio-admin.html";
+            avisar("Prato atualizado!");
+            window.location.href = "cardapio-admin.html";
         },
         error() {
-            alert("Erro ao atualizar prato.");
+            avisar("Erro ao atualizar prato.");
             $("#btn-salvar").prop("disabled", false).text("Salvar Alterações");
         }
     });

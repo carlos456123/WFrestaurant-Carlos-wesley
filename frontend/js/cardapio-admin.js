@@ -1,8 +1,7 @@
-const API = "http://localhost:8000";
-
 let delId = null;
 const modal = new bootstrap.Modal(document.getElementById("modal-del"));
 
+// ─── CARREGAR PRATOS ────────────────────────────────────
 function carregar() {
     $("#tbody").html('<tr><td colspan="6" class="text-center text-muted py-3">Carregando...</td></tr>');
 
@@ -21,12 +20,10 @@ function carregar() {
                 <td>#${p.id}</td>
                 <td>${p.nome}</td>
                 <td>${p.descricao || "—"}</td>
-                <td>R$ ${p.preco.toFixed(2)}</td>
-                <td>${p.disponivel
-                    ? '<span class="badge bg-success">Sim</span>'
-                    : '<span class="badge bg-danger">Não</span>'}</td>
+                <td>${formatarPreco(p.preco)}</td>
+                <td>${badgeDisponivel(p.disponivel)}</td>
                 <td>
-                    <a href="../editar-prato/index.html?id=${p.id}"
+                    <a href="editar-prato.html?id=${p.id}"
                        class="btn btn-outline-secondary btn-sm me-1">Editar</a>
                     <button class="btn btn-outline-danger btn-sm btn-excluir"
                             data-id="${p.id}">Excluir</button>
@@ -37,15 +34,17 @@ function carregar() {
         $("#tbody").html(html);
 
     }).fail(() => {
-        $("#tbody").html('<tr><td colspan="6" class="text-danger text-center py-3">Erro ao carregar.</td></tr>');
+        $("#tbody").html('<tr><td colspan="6" class="text-center text-danger py-3">Erro ao carregar.</td></tr>');
     });
 }
 
+// ─── EVENTO: ABRIR MODAL DELETE ─────────────────────────
 $(document).on("click", ".btn-excluir", function() {
     delId = $(this).data("id");
     modal.show();
 });
 
+// ─── EVENTO: CONFIRMAR DELETE ───────────────────────────
 $("#btn-del").on("click", function() {
     $.ajax({
         url: `${API}/produtos/${delId}`,
@@ -54,10 +53,9 @@ $("#btn-del").on("click", function() {
             modal.hide();
             carregar();
         },
-        error() {
-            alert("Erro ao excluir prato.");
-        }
+        error() { avisar("Erro ao excluir prato."); }
     });
 });
 
+// ─── INICIAR ────────────────────────────────────────────
 carregar();

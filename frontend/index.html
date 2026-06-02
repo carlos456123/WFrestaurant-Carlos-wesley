@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,22 +7,19 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar navbar-dark mb-4">
   <div class="container">
     <span class="navbar-brand">🍽️ WF Restaurant</span>
-   <div class="d-flex gap-2">
-     <a href="pedidos/index.html" class="btn btn-dark btn-sm">Gerenciar Pedidos</a>
-     <a href="cardapio-admin/cardapio-admin.html" class="btn btn-dark btn-sm">Gerenciar Cardápio</a>
-     <a href="criar/index.html" class="btn btn-warning btn-sm">+ Novo Prato</a>
-</div>
+    <div class="d-flex gap-2">
+      <a href="pages/pedidos.html"         class="btn btn-dark btn-sm">Gerenciar Pedidos</a>
+      <a href="pages/cardapio-admin.html"  class="btn btn-dark btn-sm">Gerenciar Cardápio</a>
+      <a href="pages/criar-prato.html"     class="btn btn-warning btn-sm">+ Novo Prato</a>
+    </div>
   </div>
 </nav>
 
-<!-- CONTEÚDO -->
 <div class="container">
   <div class="row">
 
@@ -45,7 +41,6 @@
 
         <h5>Total: <span id="total">R$ 0,00</span></h5>
 
-        <!-- BOTÃO FINALIZAR -->
         <button
           class="btn btn-vermelho w-100 mt-2"
           id="btn-finalizar"
@@ -55,7 +50,6 @@
         >
           Finalizar Pedido
         </button>
-
       </div>
     </div>
 
@@ -66,12 +60,10 @@
 <div class="modal fade" id="modal-pedido" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-
       <div class="modal-header" style="background-color:#8b0000;">
         <h5 class="modal-title text-white">Identificação do Cliente</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-
       <div class="modal-body">
         <div class="mb-3">
           <label class="form-label">Nome *</label>
@@ -82,19 +74,17 @@
           <input id="cli-telefone" class="form-control" placeholder="(11) 99999-9999"/>
         </div>
       </div>
-
       <div class="modal-footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         <button class="btn btn-vermelho" id="btn-confirmar">Confirmar Pedido</button>
       </div>
-
     </div>
   </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="index.js"></script>
-
+<script src="js/utils.js"></script>
+<script src="js/cardapio.js"></script>
 </body>
 </html>

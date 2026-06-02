@@ -1,29 +1,24 @@
-const API = "http://localhost:8000";
+const id = getIdDaUrl();
 
-const id = new URLSearchParams(window.location.search).get("id");
-
-if (!id) window.location.href = "../pedidos/index.html";
+if (!id) window.location.href = "pedidos.html";
 
 $("#titulo-id").text(`#${id}`);
 
-// Carrega os dados do pedido
+// ─── CARREGAR DADOS DO PEDIDO ───────────────────────────
 $.get(`${API}/pedidos/${id}`, function(p) {
-
     $("#nome_cliente").val(p.nome_cliente);
     $("#telefone").val(p.telefone);
     $("#produto").val(p.produto);
     $("#quantidade").val(p.quantidade);
     $("#valor_total").val(p.valor_total);
     $("#status").val(p.status);
-
 }).fail(() => {
-    alert("Pedido não encontrado.");
-    window.location.href = "../pedidos/index.html";
+    avisar("Pedido não encontrado.");
+    window.location.href = "pedidos.html";
 });
 
-// Salva as alterações
+// ─── SALVAR ALTERAÇÕES ──────────────────────────────────
 function salvar() {
-
     const dados = {
         nome_cliente: $("#nome_cliente").val().trim(),
         telefone:     $("#telefone").val().trim(),
@@ -34,7 +29,7 @@ function salvar() {
     };
 
     if (!dados.nome_cliente || !dados.telefone || !dados.produto) {
-        alert("Preencha todos os campos!");
+        avisar("Preencha todos os campos!");
         return;
     }
 
@@ -46,12 +41,15 @@ function salvar() {
         contentType: "application/json",
         data: JSON.stringify(dados),
         success() {
-            alert("Pedido atualizado!");
-            window.location.href = "../pedidos/index.html";
+            avisar("Pedido atualizado!");
+            window.location.href = "pedidos.html";
         },
         error() {
-            alert("Erro ao atualizar pedido.");
+            avisar("Erro ao atualizar pedido.");
             $("#btn-salvar").prop("disabled", false).text("Salvar Alterações");
         }
     });
 }
+
+// ─── MÁSCARA TELEFONE ───────────────────────────────────
+mascaraTelefone("#telefone");

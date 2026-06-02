@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cardápio — WF Restaurant</title>
+  <title>Gerenciar Cardápio — WF Restaurant</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../style.css">
 </head>
@@ -13,8 +13,9 @@
   <div class="container">
     <span class="navbar-brand">🍽️ WF Restaurant</span>
     <div class="d-flex gap-2">
-      <a href="../index.html" class="btn btn-light btn-sm">Cardápio</a>
-      <a href="../criar/index.html" class="btn btn-warning btn-sm">+ Novo Prato</a>
+      <a href="../index.html"       class="btn btn-light btn-sm">Cardápio</a>
+      <a href="pedidos.html"        class="btn btn-dark btn-sm">Gerenciar Pedidos</a>
+      <a href="criar-prato.html"    class="btn btn-warning btn-sm">+ Novo Prato</a>
     </div>
   </div>
 </nav>
@@ -37,7 +38,7 @@
   </table>
 </div>
 
-<!-- Modal confirmação delete -->
+<!-- Modal delete -->
 <div class="modal fade" id="modal-del" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -45,7 +46,7 @@
         <h5 class="modal-title">Excluir prato?</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body text-muted">Essa ação não pode ser desfeita.</div>
+      <div class="modal-body text-muted">O prato será removido do cardápio.</div>
       <div class="modal-footer">
         <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
         <button class="btn btn-danger btn-sm" id="btn-del">Excluir</button>
@@ -56,6 +57,7 @@
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="cardapio-admin.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/cardapio-admin.js"></script>
 </body>
 </html>

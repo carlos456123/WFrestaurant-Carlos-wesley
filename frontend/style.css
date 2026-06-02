@@ -30,7 +30,7 @@ body {
     color: #8b0000;
 }
 
-/* PEDIDO */
+/* PEDIDO ATUAL */
 .box-pedido {
     background-color: white;
     border-radius: 15px;
@@ -44,7 +44,7 @@ body {
     padding: 10px 0;
 }
 
-/* BOTÃO VERMELHO PADRÃO DO SISTEMA */
+/* BOTÃO PADRÃO DO SISTEMA */
 .btn-vermelho {
     background-color: #8b0000;
     border-color: #8b0000;
