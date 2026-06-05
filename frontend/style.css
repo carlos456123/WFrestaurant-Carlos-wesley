@@ -1,58 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --sidebar-w: 220px;
+  --bg: #f8f7f4;
+  --vermelho: #8b0000;
+  --vermelho-hover: #6a0000;
+  --sidebar-bg: #8b0000;
+  --sidebar-text: rgba(255,255,255,0.75);
+  --sidebar-active: white;
+  --sidebar-active-bg: rgba(255,255,255,0.15);
+  --border: #e5e2db;
+  --text: #1a1a1a;
+  --text-muted: #888;
+  --card-bg: white;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    background-color: #f5f5f5;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
 }
 
-/* NAVBAR */
-.navbar {
-    background-color: #8b0000 !important;
+/* ── SIDEBAR ─────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  padding: 0 0 20px;
 }
 
-/* CARD DOS PRATOS */
-.card-prato {
-    border: none;
-    border-radius: 15px;
-    overflow: hidden;
-    transition: 0.3s;
+.sidebar-brand {
+  padding: 22px 18px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  margin-bottom: 8px;
 }
 
-.card-prato:hover {
-    transform: scale(1.02);
+.sidebar-brand span {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.01em;
 }
 
-.imagem-prato {
-    height: 200px;
-    object-fit: cover;
+.sidebar-brand small {
+  display: block;
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 2px;
 }
 
-.preco {
-    font-size: 22px;
-    font-weight: bold;
-    color: #8b0000;
+.nav-group {
+  padding: 0 10px;
+  margin-bottom: 4px;
 }
 
-/* PEDIDO ATUAL */
-.box-pedido {
-    background-color: white;
-    border-radius: 15px;
-    padding: 20px;
-    position: sticky;
-    top: 20px;
+.nav-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  padding: 10px 10px 5px;
 }
 
-.item-pedido {
-    border-bottom: 1px solid #ddd;
-    padding: 10px 0;
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 12px;
+  border-radius: 7px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 400;
+  transition: all 0.15s;
+  margin-bottom: 2px;
 }
 
-/* BOTÃO PADRÃO DO SISTEMA */
+.nav-link:hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.nav-link.active {
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active);
+  font-weight: 500;
+}
+
+.nav-link svg { flex-shrink: 0; opacity: 0.8; }
+.nav-link.active svg { opacity: 1; }
+
+/* ── MAIN ────────────────────────────────────── */
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar h1 {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.topbar small {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 1px;
+  display: block;
+}
+
+.content {
+  padding: 24px 28px;
+}
+
+/* ── CARDS ───────────────────────────────────── */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+
+/* ── TABELA ──────────────────────────────────── */
+.table { font-size: 13.5px; }
+.table thead th {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+  background: #faf9f6 !important;
+  border-color: var(--border) !important;
+  padding: 10px 14px;
+}
+.table tbody td {
+  padding: 12px 14px;
+  border-color: var(--border) !important;
+  vertical-align: middle;
+  color: var(--text);
+}
+.table tbody tr:hover { background: #faf9f6 !important; }
+
+/* ── BOTÕES ──────────────────────────────────── */
 .btn-vermelho {
-    background-color: #8b0000;
-    border-color: #8b0000;
-    color: white;
+  background-color: var(--vermelho) !important;
+  border-color: var(--vermelho) !important;
+  color: white !important;
+  font-size: 13px;
+  font-weight: 500;
+}
+.btn-vermelho:hover {
+  background-color: var(--vermelho-hover) !important;
+  border-color: var(--vermelho-hover) !important;
 }
 
-.btn-vermelho:hover {
-    background-color: #6a0000;
-    border-color: #6a0000;
-    color: white;
+/* ── FORMULÁRIO ──────────────────────────────── */
+.form-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 5px;
 }
+.form-control, .form-select {
+  font-size: 13.5px;
+  border-color: var(--border) !important;
+  border-radius: 7px !important;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--vermelho) !important;
+  box-shadow: 0 0 0 3px rgba(139,0,0,0.1) !important;
+}
+
+/* ── CARD PRATO (cardápio cliente) ───────────── */
+.card-prato {
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+.card-prato:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
+}
+.imagem-prato {
+  height: 180px;
+  object-fit: cover;
+  width: 100%;
+}
+.preco {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--vermelho);
+}
+
+/* ── PEDIDO ATUAL ────────────────────────────── */
+.box-pedido {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: sticky;
+  top: 80px;
+}
+.item-pedido {
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+  font-size: 13px;
+}
+
+/* ── MODAL ───────────────────────────────────── */
+.modal-header {
+  background: var(--vermelho);
+}
+.modal-title { color: white; font-size: 15px; }
+
+/* ── BADGE ───────────────────────────────────── */
+.badge { font-size: 11px; font-weight: 500; }

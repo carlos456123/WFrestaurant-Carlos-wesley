@@ -1,10 +1,7 @@
 const id = getIdDaUrl();
-
 if (!id) window.location.href = "cardapio-admin.html";
-
 $("#titulo-id").text(`#${id}`);
 
-// ─── CARREGAR DADOS DO PRATO ────────────────────────────
 $.get(`${API}/produtos/${id}`, function(p) {
     $("#nome").val(p.nome);
     $("#descricao").val(p.descricao);
@@ -15,7 +12,6 @@ $.get(`${API}/produtos/${id}`, function(p) {
     window.location.href = "cardapio-admin.html";
 });
 
-// ─── SALVAR ALTERAÇÕES ──────────────────────────────────
 function salvar() {
     const dados = {
         nome:       $("#nome").val().trim(),

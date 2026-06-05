@@ -1,27 +1,22 @@
 let pedido = [];
 
-// ─── CARREGAR PRATOS ────────────────────────────────────
 function carregar() {
     $.get(`${API}/produtos`, function(lista) {
-
         let html = "";
 
         lista.forEach(p => {
             if (!p.disponivel) return;
-
             html += `
             <div class="col-md-6">
-                <div class="card card-prato shadow-sm">
-
+                <div class="card card-prato">
                     <img
                         src="${p.imagem || `https://picsum.photos/500/300?random=${p.id}`}"
                         class="imagem-prato"
                         onerror="this.src='https://picsum.photos/500/300?random=${p.id}'"
                     >
-
                     <div class="card-body">
-                        <h5>${p.nome}</h5>
-                        <p class="text-muted">${p.descricao || ""}</p>
+                        <h5 class="mb-1">${p.nome}</h5>
+                        <p class="text-muted mb-3" style="font-size:12px">${p.descricao || ""}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="preco">${formatarPreco(p.preco)}</span>
                         </div>
@@ -34,21 +29,15 @@ function carregar() {
                             Adicionar ao Pedido
                         </button>
                     </div>
-
                 </div>
             </div>`;
         });
 
-        if (html === "") {
-            html = `<div class="col"><p class="text-muted">Nenhum produto disponível.</p></div>`;
-        }
-
+        if (!html) html = `<div class="col"><p class="text-muted">Nenhum produto disponível.</p></div>`;
         $("#lista").html(html);
-
     }).fail(() => avisar("Erro ao carregar cardápio."));
 }
 
-// ─── ATUALIZAR PAINEL DO PEDIDO ─────────────────────────
 function atualizarPedido() {
     let html = "";
     let total = 0;
@@ -58,34 +47,28 @@ function atualizarPedido() {
         html += `
         <div class="item-pedido">
             <strong>${item.nome}</strong>
-            <div class="text-muted" style="font-size:13px">Quantidade: ${item.quantidade}</div>
+            <div class="text-muted" style="font-size:12px">Qtd: ${item.quantidade}</div>
             <div>${formatarPreco(item.preco * item.quantidade)}</div>
         </div>`;
     });
 
-    if (pedido.length === 0) {
-        html = `<p class="text-muted">Nenhum item no pedido.</p>`;
-    }
+    if (!pedido.length) html = `<p class="text-muted" style="font-size:13px">Nenhum item adicionado.</p>`;
 
     $("#pedido-lista").html(html);
     $("#total").text(formatarPreco(total));
     $("#btn-finalizar").prop("disabled", pedido.length === 0);
 }
 
-// ─── ADICIONAR ITEM AO PEDIDO ───────────────────────────
 function adicionarPedido(produto) {
-    let existente = pedido.find(item => item.id === produto.id);
-
+    let existente = pedido.find(i => i.id === produto.id);
     if (existente) {
         existente.quantidade++;
     } else {
         pedido.push({ ...produto, quantidade: 1 });
     }
-
     atualizarPedido();
 }
 
-// ─── EVENTO: CLIQUE NO BOTÃO ADICIONAR ─────────────────
 $(document).on("click", ".btn-pedir", function() {
     adicionarPedido({
         id:    $(this).data("id"),
@@ -94,7 +77,6 @@ $(document).on("click", ".btn-pedir", function() {
     });
 });
 
-// ─── EVENTO: CONFIRMAR PEDIDO ───────────────────────────
 $("#btn-confirmar").on("click", function() {
     const nome_cliente = $("#cli-nome").val().trim();
     const telefone     = $("#cli-telefone").val().trim();
@@ -104,37 +86,31 @@ $("#btn-confirmar").on("click", function() {
         return;
     }
 
-    let promessas = pedido.map(item => {
-        return $.ajax({
-            url: `${API}/pedidos`,
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({
-                nome_cliente: nome_cliente,
-                telefone:     telefone,
-                produto:      item.nome,
-                quantidade:   item.quantidade,
-                valor_total:  item.preco * item.quantidade,
-                status:       "Preparando"
-            })
-        });
-    });
+    // Envia produto_id (FK) — não mais o nome
+    let promessas = pedido.map(item => $.ajax({
+        url: `${API}/pedidos`,
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            nome_cliente: nome_cliente,
+            telefone:     telefone,
+            produto_id:   item.id,       // ← FK aqui
+            quantidade:   item.quantidade,
+            valor_total:  item.preco * item.quantidade,
+            status:       "Preparando"
+        })
+    }));
 
     $.when(...promessas)
         .done(function() {
-            bootstrap.Modal.getInstance(
-                document.getElementById("modal-pedido")
-            ).hide();
-
+            bootstrap.Modal.getInstance(document.getElementById("modal-pedido")).hide();
             pedido = [];
             atualizarPedido();
-            avisar(`Pedido de ${nome_cliente} registrado com sucesso!`);
-            $("#cli-nome").val("");
-            $("#cli-telefone").val("");
+            avisar(`Pedido de ${nome_cliente} registrado!`);
+            $("#cli-nome, #cli-telefone").val("");
         })
-        .fail(() => avisar("Erro ao registrar pedido. Tente novamente."));
+        .fail(() => avisar("Erro ao registrar pedido."));
 });
 
-// ─── INICIAR ────────────────────────────────────────────
 mascaraTelefone("#cli-telefone");
 carregar();

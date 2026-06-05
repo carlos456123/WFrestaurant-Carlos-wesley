@@ -1,28 +1,28 @@
 let delId = null;
 const modal = new bootstrap.Modal(document.getElementById("modal-del"));
 
-// ─── CARREGAR PEDIDOS ───────────────────────────────────
 function carregar() {
-    $("#tbody").html('<tr><td colspan="8" class="text-center text-muted py-3">Carregando...</td></tr>');
+    $("#tbody").html('<tr><td colspan="8" class="text-center text-muted py-4">Carregando...</td></tr>');
 
     $.get(`${API}/pedidos`, function(lista) {
-
         if (!lista.length) {
-            $("#tbody").html('<tr><td colspan="8" class="text-center text-muted py-3">Nenhum pedido registrado.</td></tr>');
+            $("#tbody").html('<tr><td colspan="8" class="text-center text-muted py-4">Nenhum pedido registrado.</td></tr>');
             return;
         }
 
         let html = "";
-
         lista.forEach(p => {
+            // produto_rel vem embutido pelo backend graças ao FK
+            const nomeProduto = p.produto_rel ? p.produto_rel.nome : "—";
+
             html += `
             <tr>
-                <td>#${p.id}</td>
-                <td>${p.nome_cliente}</td>
+                <td style="color:#aaa">#${p.id}</td>
+                <td><strong>${p.nome_cliente}</strong></td>
                 <td>${p.telefone}</td>
-                <td>${p.produto}</td>
+                <td>${nomeProduto}</td>
                 <td>${p.quantidade}</td>
-                <td>${formatarPreco(p.valor_total)}</td>
+                <td style="color:var(--vermelho); font-weight:600">${formatarPreco(p.valor_total)}</td>
                 <td>${badgeStatus(p.status)}</td>
                 <td>
                     <a href="editar-pedido.html?id=${p.id}"
@@ -34,30 +34,23 @@ function carregar() {
         });
 
         $("#tbody").html(html);
-
     }).fail(() => {
-        $("#tbody").html('<tr><td colspan="8" class="text-center text-danger py-3">Erro ao carregar pedidos.</td></tr>');
+        $("#tbody").html('<tr><td colspan="8" class="text-center text-danger py-4">Erro ao carregar pedidos.</td></tr>');
     });
 }
 
-// ─── EVENTO: ABRIR MODAL DELETE ─────────────────────────
 $(document).on("click", ".btn-excluir", function() {
     delId = $(this).data("id");
     modal.show();
 });
 
-// ─── EVENTO: CONFIRMAR DELETE ───────────────────────────
 $("#btn-del").on("click", function() {
     $.ajax({
         url: `${API}/pedidos/${delId}`,
         method: "DELETE",
-        success() {
-            modal.hide();
-            carregar();
-        },
-        error() { avisar("Erro ao excluir pedido."); }
+        success() { modal.hide(); carregar(); },
+        error()   { avisar("Erro ao excluir pedido."); }
     });
 });
 
-// ─── INICIAR ────────────────────────────────────────────
 carregar();

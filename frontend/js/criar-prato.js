@@ -1,13 +1,12 @@
-// ─── EVENTO: SUBMIT DO FORMULÁRIO ──────────────────────
 $("#form-criar").on("submit", function(e) {
     e.preventDefault();
 
     const dados = {
-        nome:      $("#nome").val().trim(),
-        descricao: $("#descricao").val().trim(),
-        preco:     parseFloat($("#preco").val()),
+        nome:       $("#nome").val().trim(),
+        descricao:  $("#descricao").val().trim(),
+        preco:      parseFloat($("#preco").val()),
         disponivel: true,
-        imagem:    ""
+        imagem:     ""
     };
 
     if (!dados.nome || isNaN(dados.preco)) {
