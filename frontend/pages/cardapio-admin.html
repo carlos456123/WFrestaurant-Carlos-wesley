@@ -21,6 +21,18 @@
   </div>
 
   <div class="content">
+
+    <!-- Campo de busca -->
+    <div class="mb-3 d-flex gap-2">
+      <input
+        id="input-busca"
+        class="form-control"
+        placeholder="Buscar prato... (ex: frango, filé, peixe)"
+        style="max-width:600px"
+      />
+      <button class="btn btn-outline-secondary btn-sm" onclick="limparBusca()">Limpar</button>
+    </div>
+
     <div class="card">
       <div class="card-body p-0">
         <table class="table table-hover mb-0">
@@ -64,6 +76,7 @@
 <script src="../js/cardapio-admin.js"></script>
 <script>
   $("#sidebar-container").html(renderSidebar("../"));
+  exigirLogin("../");
   navAtivo("cardapio-admin");
 </script>
 </body>

@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy.orm import Session
 from models import Produto, Pedido
 from schemas import ProdutoCreate, ProdutoUpdate, PedidoCreate, PedidoUpdate
@@ -5,8 +6,12 @@ from schemas import ProdutoCreate, ProdutoUpdate, PedidoCreate, PedidoUpdate
 
 # ── PRODUTO ──────────────────────────────────────────────
 
-def listar_produtos(db: Session):
-    return db.query(Produto).all()
+def listar_produtos(db: Session, nome: Optional[str] = None):
+    query = db.query(Produto)
+    if nome:
+        # ilike = case-insensitive, %nome% = busca parcial em qualquer posição
+        query = query.filter(Produto.nome.ilike(f"%{nome}%"))
+    return query.all()
 
 def buscar_produto(db: Session, produto_id: int):
     return db.query(Produto).filter(Produto.id == produto_id).first()

@@ -1,4 +1,5 @@
-from fastapi import Depends, FastAPI, HTTPException, status
+from typing import Optional
+from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -41,8 +42,8 @@ def login(dados: LoginRequest, db: Session = Depends(get_db)):
 
 # GET — públicos
 @app.get("/produtos", response_model=list[ProdutoResponse])
-def listar_produtos(db: Session = Depends(get_db)):
-    return crud.listar_produtos(db)
+def listar_produtos(nome: Optional[str] = Query(None, description="Filtrar por nome"), db: Session = Depends(get_db)):
+    return crud.listar_produtos(db, nome=nome)
 
 @app.get("/produtos/{produto_id}", response_model=ProdutoResponse)
 def buscar_produto(produto_id: int, db: Session = Depends(get_db)):
