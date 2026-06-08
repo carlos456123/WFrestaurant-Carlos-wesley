@@ -53,7 +53,7 @@ function atualizarPedido() {
     });
 
     if (!pedido.length) html = `<p class="text-muted" style="font-size:13px">Nenhum item adicionado.</p>`;
-
+    
     $("#pedido-lista").html(html);
     $("#total").text(formatarPreco(total));
     $("#btn-finalizar").prop("disabled", pedido.length === 0);
@@ -86,15 +86,16 @@ $("#btn-confirmar").on("click", function() {
         return;
     }
 
-    // Envia produto_id (FK) — não mais o nome
+    // POST protegido — envia token no header
     let promessas = pedido.map(item => $.ajax({
         url: `${API}/pedidos`,
         method: "POST",
         contentType: "application/json",
+        headers: authHeader(),
         data: JSON.stringify({
             nome_cliente: nome_cliente,
             telefone:     telefone,
-            produto_id:   item.id,       // ← FK aqui
+            produto_id:   item.id,
             quantidade:   item.quantidade,
             valor_total:  item.preco * item.quantidade,
             status:       "Preparando"
@@ -109,7 +110,14 @@ $("#btn-confirmar").on("click", function() {
             avisar(`Pedido de ${nome_cliente} registrado!`);
             $("#cli-nome, #cli-telefone").val("");
         })
-        .fail(() => avisar("Erro ao registrar pedido."));
+        .fail(xhr => {
+            if (xhr.status === 401) {
+                avisar("Sessão expirada. Faça login novamente.");
+                sair("");
+            } else {
+                avisar("Erro ao registrar pedido.");
+            }
+        });
 });
 
 mascaraTelefone("#cli-telefone");

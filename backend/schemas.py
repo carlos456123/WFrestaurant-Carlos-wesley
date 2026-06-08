@@ -2,6 +2,18 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
 
+# ── AUTH ─────────────────────────────────────────────────
+
+class LoginRequest(BaseModel):
+    email: str
+    senha: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type:   str = "bearer"
+    nome:         str   # nome do usuário para exibir na navbar
+
+
 # ── PRODUTO ──────────────────────────────────────────────
 
 class ProdutoCreate(BaseModel):
@@ -33,7 +45,7 @@ class ProdutoResponse(BaseModel):
 class PedidoCreate(BaseModel):
     nome_cliente: str
     telefone:     str
-    produto_id:   int       # FK — recebe o ID do produto
+    produto_id:   int
     quantidade:   int
     valor_total:  float
     status:       str = "Preparando"
@@ -54,5 +66,5 @@ class PedidoResponse(BaseModel):
     valor_total:  float
     status:       str
     produto_id:   int
-    produto_rel:  ProdutoResponse   # objeto do produto embutido na resposta
+    produto_rel:  ProdutoResponse
     model_config = ConfigDict(from_attributes=True)

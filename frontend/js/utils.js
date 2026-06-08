@@ -1,5 +1,6 @@
 const API = "http://localhost:8000";
 
+// ── FUNÇÕES GERAIS ───────────────────────────────────────
 function avisar(msg) { alert(msg); }
 
 function formatarPreco(valor) {
@@ -37,13 +38,42 @@ function getIdDaUrl() {
     return new URLSearchParams(window.location.search).get("id");
 }
 
-// Marca o link ativo na sidebar
+
 function navAtivo(pagina) {
+
     $(`.nav-link[data-p="${pagina}"]`).addClass("active");
 }
 
-// Sidebar HTML compartilhada — recebe o prefixo do caminho ('' ou '../')
+// ── AUTH ─────────────────────────────────────────────────
+
+// Retorna o token salvo
+function getToken() {
+    return localStorage.getItem("token");
+}
+
+// Monta o header Authorization para requisições protegidas
+function authHeader() {
+    return { "Authorization": `Bearer ${getToken()}` };
+}
+
+// Redireciona para login se não estiver autenticado
+function exigirLogin(base) {
+    if (!getToken()) {
+        window.location.href = base + "login.html";
+    }
+}
+
+// Logout
+function sair(base) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+    window.location.href = base + "login.html";
+}
+
+// ── SIDEBAR ──────────────────────────────────────────────
 function renderSidebar(base) {
+    const usuario = localStorage.getItem("usuario") || "Usuário";
+
     return `
     <aside class="sidebar">
       <div class="sidebar-brand">
@@ -84,6 +114,19 @@ function renderSidebar(base) {
           </svg>
           Ver Pedidos
         </a>
+      </div>
+
+      <!-- Usuário logado + botão sair (fixo na base da sidebar) -->
+      <div style="margin-top:auto; padding:12px 10px; border-top:1px solid rgba(255,255,255,0.15);">
+        <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:2px;">Logado como</div>
+        <div style="font-size:13px; color:white; font-weight:500; margin-bottom:10px;">${usuario}</div>
+        <button
+          onclick="sair('${base}')"
+          class="btn btn-sm w-100"
+          style="background:rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.2); font-size:12px;"
+        >
+          Sair
+        </button>
       </div>
     </aside>`;
 }

@@ -20,14 +20,12 @@ function carregar() {
                 <td style="color:var(--vermelho); font-weight:600">${formatarPreco(p.preco)}</td>
                 <td>${badgeDisponivel(p.disponivel)}</td>
                 <td>
-                    <a href="editar-prato.html?id=${p.id}"
-                       class="btn btn-outline-secondary btn-sm me-1">Editar</a>
-                    <button class="btn btn-outline-danger btn-sm btn-excluir"
-                            data-id="${p.id}">Excluir</button>
+                    <a href="editar-prato.html?id=${p.id}" class="btn btn-outline-secondary btn-sm me-1">Editar</a>
+                    <button class="btn btn-outline-danger btn-sm btn-excluir" data-id="${p.id}">Excluir</button>
                 </td>
             </tr>`;
         });
-
+        
         $("#tbody").html(html);
     }).fail(() => {
         $("#tbody").html('<tr><td colspan="6" class="text-center text-danger py-4">Erro ao carregar.</td></tr>');
@@ -39,12 +37,17 @@ $(document).on("click", ".btn-excluir", function() {
     modal.show();
 });
 
+// DELETE protegido
 $("#btn-del").on("click", function() {
     $.ajax({
         url: `${API}/produtos/${delId}`,
         method: "DELETE",
+        headers: authHeader(),
         success() { modal.hide(); carregar(); },
-        error()   { avisar("Erro ao excluir prato."); }
+        error(xhr) {
+            if (xhr.status === 401) { avisar("Sessão expirada."); sair("../"); }
+            else { avisar("Erro ao excluir prato."); }
+        }
     });
 });
 

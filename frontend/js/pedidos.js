@@ -11,8 +11,9 @@ function carregar() {
         }
 
         let html = "";
+
         lista.forEach(p => {
-            // produto_rel vem embutido pelo backend graças ao FK
+
             const nomeProduto = p.produto_rel ? p.produto_rel.nome : "—";
 
             html += `
@@ -25,14 +26,12 @@ function carregar() {
                 <td style="color:var(--vermelho); font-weight:600">${formatarPreco(p.valor_total)}</td>
                 <td>${badgeStatus(p.status)}</td>
                 <td>
-                    <a href="editar-pedido.html?id=${p.id}"
-                       class="btn btn-outline-secondary btn-sm me-1">Editar</a>
-                    <button class="btn btn-outline-danger btn-sm btn-excluir"
-                            data-id="${p.id}">Excluir</button>
+                    <a href="editar-pedido.html?id=${p.id}" class="btn btn-outline-secondary btn-sm me-1">Editar</a>
+                    <button class="btn btn-outline-danger btn-sm btn-excluir" data-id="${p.id}">Excluir</button>
                 </td>
             </tr>`;
         });
-
+        
         $("#tbody").html(html);
     }).fail(() => {
         $("#tbody").html('<tr><td colspan="8" class="text-center text-danger py-4">Erro ao carregar pedidos.</td></tr>');
@@ -44,12 +43,17 @@ $(document).on("click", ".btn-excluir", function() {
     modal.show();
 });
 
+// DELETE protegido
 $("#btn-del").on("click", function() {
     $.ajax({
         url: `${API}/pedidos/${delId}`,
         method: "DELETE",
+        headers: authHeader(),
         success() { modal.hide(); carregar(); },
-        error()   { avisar("Erro ao excluir pedido."); }
+        error(xhr) {
+            if (xhr.status === 401) { avisar("Sessão expirada."); sair("../"); }
+            else { avisar("Erro ao excluir pedido."); }
+        }
     });
 });
 

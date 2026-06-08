@@ -2,22 +2,23 @@ const id = getIdDaUrl();
 if (!id) window.location.href = "pedidos.html";
 $("#titulo-id").text(`#${id}`);
 
-// Carrega produtos no select
+
 $.get(`${API}/produtos`, function(lista) {
     const sel = $("#produto_id").empty();
     lista.forEach(p => {
         sel.append(`<option value="${p.id}">${p.nome} — R$ ${p.preco.toFixed(2)}</option>`);
     });
 
-    // Depois de carregar os produtos, carrega o pedido
+    
     carregarPedido();
+
 }).fail(() => avisar("Erro ao carregar produtos."));
 
 function carregarPedido() {
     $.get(`${API}/pedidos/${id}`, function(p) {
         $("#nome_cliente").val(p.nome_cliente);
         $("#telefone").val(p.telefone);
-        $("#produto_id").val(p.produto_id);   // seleciona o produto pelo FK
+        $("#produto_id").val(p.produto_id);
         $("#quantidade").val(p.quantidade);
         $("#valor_total").val(p.valor_total);
         $("#status").val(p.status);
@@ -31,7 +32,7 @@ function salvar() {
     const dados = {
         nome_cliente: $("#nome_cliente").val().trim(),
         telefone:     $("#telefone").val().trim(),
-        produto_id:   parseInt($("#produto_id").val()),  // FK
+        produto_id:   parseInt($("#produto_id").val()),
         quantidade:   parseInt($("#quantidade").val()),
         valor_total:  parseFloat($("#valor_total").val()),
         status:       $("#status").val()
@@ -44,17 +45,20 @@ function salvar() {
 
     $("#btn-salvar").prop("disabled", true).text("Salvando...");
 
+    // PUT protegido
     $.ajax({
         url: `${API}/pedidos/${id}`,
         method: "PUT",
         contentType: "application/json",
+        headers: authHeader(),
         data: JSON.stringify(dados),
         success() {
             avisar("Pedido atualizado!");
             window.location.href = "pedidos.html";
         },
-        error() {
-            avisar("Erro ao atualizar pedido.");
+        error(xhr) {
+            if (xhr.status === 401) { avisar("Sessão expirada."); sair("../"); }
+            else { avisar("Erro ao atualizar pedido."); }
             $("#btn-salvar").prop("disabled", false).text("Salvar Alterações");
         }
     });
