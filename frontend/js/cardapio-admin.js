@@ -1,26 +1,31 @@
-let delId = null;
+let delId  = null;
+let paginaAtual = 1;
+const LIMIT = 8;
 const modal = new bootstrap.Modal(document.getElementById("modal-del"));
 
-// ── CARREGAR — aceita termo de busca opcional ────────────
-function carregar(nome = "") {
+// ── CARREGAR — busca + paginação juntas ──────────────────
+function carregar(page = 1) {
+    paginaAtual = page;
+    const nome  = $("#input-busca").val().trim();
+
     $("#tbody").html('<tr><td colspan="6" class="text-center text-muted py-4">Carregando...</td></tr>');
 
-    // Monta a URL com ou sem o parâmetro de busca
-    const url = nome
-        ? `${API}/produtos?nome=${encodeURIComponent(nome)}`
-        : `${API}/produtos`;
+    let url = `${API}/produtos?page=${page}&limit=${LIMIT}`;
+    if (nome) url += `&nome=${encodeURIComponent(nome)}`;
 
-    $.get(url, function(lista) {
-        if (!lista.length) {
+    $.get(url, function(res) {
+        // res = { data, total, page, limit, pages }
+        if (!res.data.length) {
             const msg = nome
                 ? `Nenhum prato encontrado para "<strong>${nome}</strong>".`
                 : "Nenhum prato cadastrado.";
             $("#tbody").html(`<tr><td colspan="6" class="text-center text-muted py-4">${msg}</td></tr>`);
+            renderPaginacao(res);
             return;
         }
 
         let html = "";
-        lista.forEach(p => {
+        res.data.forEach(p => {
             html += `
             <tr>
                 <td style="color:#aaa">#${p.id}</td>
@@ -35,24 +40,49 @@ function carregar(nome = "") {
             </tr>`;
         });
         $("#tbody").html(html);
+        renderPaginacao(res);
     }).fail(() => {
         $("#tbody").html('<tr><td colspan="6" class="text-center text-danger py-4">Erro ao carregar.</td></tr>');
     });
 }
 
-// ── BUSCA EM TEMPO REAL ──────────────────────────────────
+// ── RENDERIZA OS BOTÕES DE PAGINAÇÃO ────────────────────
+function renderPaginacao(res) {
+    const { page, pages, total } = res;
+
+    let html = `
+    <div class="d-flex align-items-center justify-content-between mt-3 px-1">
+        <small class="text-muted">${total} prato(s) encontrado(s)</small>
+        <div class="d-flex align-items-center gap-2">
+            <button
+                class="btn btn-outline-secondary btn-sm"
+                onclick="carregar(${page - 1})"
+                ${page <= 1 ? "disabled" : ""}
+            >← Anterior</button>
+
+            <span style="font-size:13px; color:#666">Página ${page} de ${pages}</span>
+
+            <button
+                class="btn btn-outline-secondary btn-sm"
+                onclick="carregar(${page + 1})"
+                ${page >= pages ? "disabled" : ""}
+            >Próximo →</button>
+        </div>
+    </div>`;
+
+    $("#paginacao").html(html);
+}
+
+// ── BUSCA COM DEBOUNCE ───────────────────────────────────
 let timer = null;
 $("#input-busca").on("input", function() {
     clearTimeout(timer);
-    const termo = $(this).val().trim();
-    // Espera 400ms depois que parar de digitar para chamar a API
-    timer = setTimeout(() => carregar(termo), 400);
+    timer = setTimeout(() => carregar(1), 400); // volta pra página 1 ao buscar
 });
 
-// ── LIMPAR BUSCA ─────────────────────────────────────────
 function limparBusca() {
     $("#input-busca").val("");
-    carregar();
+    carregar(1);
 }
 
 // ── DELETE ───────────────────────────────────────────────
@@ -68,8 +98,7 @@ $("#btn-del").on("click", function() {
         headers: authHeader(),
         success() {
             modal.hide();
-            // Mantém o filtro ativo ao recarregar após excluir
-            carregar($("#input-busca").val().trim());
+            carregar(paginaAtual);
         },
         error(xhr) {
             if (xhr.status === 401) { avisar("Sessão expirada."); sair("../"); }
@@ -78,5 +107,4 @@ $("#btn-del").on("click", function() {
     });
 });
 
-// ── INICIAR ──────────────────────────────────────────────
 carregar();

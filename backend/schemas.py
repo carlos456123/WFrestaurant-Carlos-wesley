@@ -68,3 +68,20 @@ class PedidoResponse(BaseModel):
     produto_id:   int
     produto_rel:  ProdutoResponse
     model_config = ConfigDict(from_attributes=True)
+
+
+# ── PAGINAÇÃO ─────────────────────────────────────────────
+
+class ProdutoPaginado(BaseModel):
+    data:  list[ProdutoResponse]
+    total: int
+    page:  int
+    limit: int
+    pages: int
+
+class PedidoPaginado(BaseModel):
+    data:  list[PedidoResponse]
+    total: int
+    page:  int
+    limit: int
+    pages: int

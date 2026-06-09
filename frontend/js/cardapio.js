@@ -1,9 +1,9 @@
 let pedido = [];
 
 function carregar() {
-    $.get(`${API}/produtos`, function(lista) {
+    $.get(`${API}/produtos?limit=100`, function(res) {
+        const lista = res.data;
         let html = "";
-
         lista.forEach(p => {
             if (!p.disponivel) return;
             html += `
@@ -32,7 +32,6 @@ function carregar() {
                 </div>
             </div>`;
         });
-
         if (!html) html = `<div class="col"><p class="text-muted">Nenhum produto disponível.</p></div>`;
         $("#lista").html(html);
     }).fail(() => avisar("Erro ao carregar cardápio."));
@@ -41,7 +40,6 @@ function carregar() {
 function atualizarPedido() {
     let html = "";
     let total = 0;
-
     pedido.forEach(item => {
         total += item.preco * item.quantidade;
         html += `
@@ -51,9 +49,7 @@ function atualizarPedido() {
             <div>${formatarPreco(item.preco * item.quantidade)}</div>
         </div>`;
     });
-
     if (!pedido.length) html = `<p class="text-muted" style="font-size:13px">Nenhum item adicionado.</p>`;
-    
     $("#pedido-lista").html(html);
     $("#total").text(formatarPreco(total));
     $("#btn-finalizar").prop("disabled", pedido.length === 0);
