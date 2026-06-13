@@ -49,7 +49,7 @@ function renderPaginacao(res) {
         <small class="text-muted">${total} pedido(s) no total</small>
         <div class="d-flex align-items-center gap-2">
             <button
-                class="btn btn-outline-secondary btn-sm"
+                class="btn btn-outline-danger btn-sm"
                 onclick="carregar(${page - 1})"
                 ${page <= 1 ? "disabled" : ""}
             >← Anterior</button>
@@ -57,7 +57,7 @@ function renderPaginacao(res) {
             <span style="font-size:13px; color:#666">Página ${page} de ${pages}</span>
 
             <button
-                class="btn btn-outline-secondary btn-sm"
+                class="btn btn-outline-danger btn-sm"
                 onclick="carregar(${page + 1})"
                 ${page >= pages ? "disabled" : ""}
             >Próximo →</button>

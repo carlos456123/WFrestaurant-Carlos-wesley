@@ -9,11 +9,7 @@ function carregar() {
             html += `
             <div class="col-md-6">
                 <div class="card card-prato">
-                    <img
-                        src="${p.imagem || `https://picsum.photos/500/300?random=${p.id}`}"
-                        class="imagem-prato"
-                        onerror="this.src='https://picsum.photos/500/300?random=${p.id}'"
-                    >
+                    ${imagemPrato(p.imagem, p.nome, "")}
                     <div class="card-body">
                         <h5 class="mb-1">${p.nome}</h5>
                         <p class="text-muted mb-3" style="font-size:12px">${p.descricao || ""}</p>

@@ -42,6 +42,13 @@
             <option value="false">Não</option>
           </select>
         </div>
+        <div class="mb-3">
+          <label class="form-label">Imagem (arquivo na pasta /img)</label>
+          <input id="imagem" type="text" class="form-control" placeholder="ex: frango-grelhado.jpg">
+          <div class="form-text" style="font-size:11px; color:#aaa">
+            Coloque a foto na pasta <code>frontend/img/</code> e digite o nome exato do arquivo, com extensão (.jpg, .png)
+          </div>
+        </div>
         <button class="btn btn-vermelho w-100" id="btn-salvar" onclick="salvar()">
           Salvar Alterações
         </button>
@@ -56,6 +63,8 @@
 <script src="../js/editar-prato.js"></script>
 <script>
   $("#sidebar-container").html(renderSidebar("../"));
+  exigirLogin("../");
+  initTopbar();
   navAtivo("cardapio-admin");
 </script>
 </body>

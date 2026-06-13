@@ -38,36 +38,150 @@ function getIdDaUrl() {
     return new URLSearchParams(window.location.search).get("id");
 }
 
-
 function navAtivo(pagina) {
-
     $(`.nav-link[data-p="${pagina}"]`).addClass("active");
 }
 
 // ── AUTH ─────────────────────────────────────────────────
-
-// Retorna o token salvo
 function getToken() {
     return localStorage.getItem("token");
 }
 
-// Monta o header Authorization para requisições protegidas
 function authHeader() {
     return { "Authorization": `Bearer ${getToken()}` };
 }
 
-// Redireciona para login se não estiver autenticado
 function exigirLogin(base) {
     if (!getToken()) {
         window.location.href = base + "login.html";
     }
 }
 
-// Logout
 function sair(base) {
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
     window.location.href = base + "login.html";
+}
+
+// ── IMAGENS — pasta img/ ──────────────────────────────────
+// Recebe o nome do arquivo salvo no banco (ex: "frango.jpg")
+// e devolve o caminho correto considerando a profundidade da página.
+// base = "" para index.html (raiz) ou "../" para páginas dentro de pages/
+function caminhoImagem(nomeArquivo, base) {
+    if (!nomeArquivo) return null;
+    return `${base}img/${nomeArquivo}`;
+}
+
+// Thumbnail pequena (tabelas)
+function thumbPrato(nomeArquivo, nome, base) {
+    const src = caminhoImagem(nomeArquivo, base);
+    if (src) {
+        return `<img
+            src="${src}"
+            alt="${nome}"
+            class="thumb-prato"
+            onerror="this.outerHTML='<div class=\\'thumb-placeholder\\'>🍽️</div>'"
+        />`;
+    }
+    return `<div class="thumb-placeholder">🍽️</div>`;
+}
+
+// Imagem grande (card do cardápio do cliente)
+function imagemPrato(nomeArquivo, nome, base) {
+    const src = caminhoImagem(nomeArquivo, base);
+    if (src) {
+        return `<img
+            src="${src}"
+            alt="${nome}"
+            class="imagem-prato"
+            onerror="this.outerHTML='<div class=\\'imagem-prato d-flex align-items-center justify-content-center\\' style=\\'font-size:40px\\'>🍽️</div>'"
+        />`;
+    }
+    return `<div class="imagem-prato d-flex align-items-center justify-content-center" style="font-size:40px">🍽️</div>`;
+}
+
+// ── SIDEBAR TOGGLE — funciona em qualquer tamanho de tela ─
+function initSidebarToggle() {
+    if (!$("#sidebar-overlay").length) {
+        $("body").append('<div class="sidebar-overlay" id="sidebar-overlay"></div>');
+    }
+
+    // Estado salvo (lembra se o usuário fechou a sidebar)
+    const fechada = localStorage.getItem("sidebarFechada") === "true";
+    if (fechada && window.innerWidth > 768) {
+        $("#sidebar").addClass("fechada");
+        $(".main").addClass("expandido");
+    }
+
+    // Toggle ao clicar no hambúrguer
+    $("#btn-hamburguer").on("click", function() {
+        const isMobile = window.innerWidth <= 768;
+
+        $("#sidebar").toggleClass("fechada");
+        $(".main").toggleClass("expandido");
+
+        const estaFechada = $("#sidebar").hasClass("fechada");
+
+        // No mobile, usa overlay; no desktop, apenas desliza
+        if (isMobile) {
+            $("#sidebar-overlay").toggleClass("ativo", !estaFechada);
+        } else {
+            localStorage.setItem("sidebarFechada", estaFechada);
+        }
+    });
+
+    // Fecha ao clicar no overlay (mobile)
+    $("#sidebar-overlay").on("click", function() {
+        $("#sidebar").addClass("fechada");
+        $(this).removeClass("ativo");
+    });
+
+    // No mobile, sidebar sempre começa fechada (independente do localStorage)
+    if (window.innerWidth <= 768) {
+        $("#sidebar").addClass("fechada");
+        $(".main").removeClass("expandido");
+    }
+
+    // Fecha ao clicar em um link (mobile)
+    $(".sidebar .nav-link").on("click", function() {
+        if (window.innerWidth <= 768) {
+            $("#sidebar").addClass("fechada");
+            $("#sidebar-overlay").removeClass("ativo");
+        }
+    });
+}
+
+// ── TOPBAR — injeta o botão hambúrguer ───────────────────
+function initTopbar() {
+    const topbar = $(".topbar");
+    if (topbar.length && !$("#btn-hamburguer").length) {
+        let titulo = topbar.children("div").first();
+
+        // Fallback: se não achar nenhum <div> filho direto, usa o primeiro filho qualquer
+        if (!titulo.length) {
+            titulo = topbar.children().first();
+        }
+
+        const botaoHTML = `
+            <button class="btn-hamburguer" id="btn-hamburguer" title="Abrir/Fechar menu">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <line x1="3" y1="6"  x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
+        `;
+
+        if (titulo.length) {
+            titulo.wrap('<div class="topbar-left"></div>');
+            titulo.before(botaoHTML);
+        } else {
+            // Último fallback: insere direto no início da topbar
+            topbar.prepend(botaoHTML);
+        }
+
+        initSidebarToggle();
+    }
 }
 
 // ── SIDEBAR ──────────────────────────────────────────────
@@ -75,7 +189,7 @@ function renderSidebar(base) {
     const usuario = localStorage.getItem("usuario") || "Usuário";
 
     return `
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <span>🍽️ WF Restaurant</span>
         <small>Sistema de Gestão</small>
@@ -116,7 +230,7 @@ function renderSidebar(base) {
         </a>
       </div>
 
-      <!-- Usuário logado + botão sair (fixo na base da sidebar) -->
+      <!-- Usuário logado + Sair -->
       <div style="margin-top:auto; padding:12px 10px; border-top:1px solid rgba(255,255,255,0.15);">
         <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:2px;">Logado como</div>
         <div style="font-size:13px; color:white; font-weight:500; margin-bottom:10px;">${usuario}</div>

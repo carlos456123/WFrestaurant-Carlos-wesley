@@ -6,7 +6,7 @@ $("#form-criar").on("submit", function(e) {
         descricao:  $("#descricao").val().trim(),
         preco:      parseFloat($("#preco").val()),
         disponivel: true,
-        imagem:     ""
+        imagem:     $("#imagem").val().trim()
     };
 
     if (!dados.nome || isNaN(dados.preco)) {
@@ -14,7 +14,6 @@ $("#form-criar").on("submit", function(e) {
         return;
     }
 
-    // POST protegido
     $.ajax({
         url: `${API}/produtos`,
         method: "POST",

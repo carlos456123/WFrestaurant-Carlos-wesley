@@ -22,7 +22,7 @@ class Produto(Base):
     disponivel = Column(Boolean, default=True)
     imagem     = Column(String, default="")
 
-    # Um produto pode ter vários pedidos
+
     pedidos = relationship("Pedido", back_populates="produto_rel")
 
 

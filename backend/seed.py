@@ -1,8 +1,3 @@
-"""
-Rode esse arquivo UMA VEZ para criar o usuário admin no banco:
-    python seed.py
-"""
-
 from database import SessionLocal, engine, Base
 from models import Usuario
 from auth import gerar_hash

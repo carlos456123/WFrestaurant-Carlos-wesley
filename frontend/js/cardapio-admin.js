@@ -29,6 +29,7 @@ function carregar(page = 1) {
             html += `
             <tr>
                 <td style="color:#aaa">#${p.id}</td>
+                <td>${thumbPrato(p.imagem, p.nome, "../")}</td>
                 <td><strong>${p.nome}</strong></td>
                 <td>${p.descricao || "—"}</td>
                 <td style="color:var(--vermelho); font-weight:600">${formatarPreco(p.preco)}</td>
@@ -55,7 +56,7 @@ function renderPaginacao(res) {
         <small class="text-muted">${total} prato(s) encontrado(s)</small>
         <div class="d-flex align-items-center gap-2">
             <button
-                class="btn btn-outline-secondary btn-sm"
+                class="btn btn-outline-danger btn-sm"
                 onclick="carregar(${page - 1})"
                 ${page <= 1 ? "disabled" : ""}
             >← Anterior</button>
@@ -63,7 +64,7 @@ function renderPaginacao(res) {
             <span style="font-size:13px; color:#666">Página ${page} de ${pages}</span>
 
             <button
-                class="btn btn-outline-secondary btn-sm"
+                class="btn btn-outline-danger btn-sm"
                 onclick="carregar(${page + 1})"
                 ${page >= pages ? "disabled" : ""}
             >Próximo →</button>
