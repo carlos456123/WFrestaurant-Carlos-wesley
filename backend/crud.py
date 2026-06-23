@@ -1,8 +1,9 @@
 import math
 from typing import Optional
 from sqlalchemy.orm import Session
-from models import Produto, Pedido
-from schemas import ProdutoCreate, ProdutoUpdate, PedidoCreate, PedidoUpdate
+from models import Produto, Pedido, Usuario
+from schemas import ProdutoCreate, ProdutoUpdate, PedidoCreate, PedidoUpdate, UsuarioCreate
+from auth import gerar_hash
 
 
 # ── PRODUTO ──────────────────────────────────────────────
@@ -111,3 +112,26 @@ def deletar_pedido(db: Session, pedido_id: int):
         db.delete(pedido)
         db.commit()
     return pedido
+
+
+# ── USUARIO ──────────────────────────────────────────────
+
+def buscar_usuario_por_email(db: Session, email: str):
+    return db.query(Usuario).filter(Usuario.email == email).first()
+
+def criar_usuario(db: Session, dados: UsuarioCreate):
+    # Verifica se email já existe
+    existente = buscar_usuario_por_email(db, dados.email)
+    if existente:
+        return "email_duplicado"
+
+    usuario = Usuario(
+        nome       = dados.nome,
+        email      = dados.email,
+        senha_hash = gerar_hash(dados.senha),
+        role       = "usuario"   # sempre cria como usuario comum
+    )
+    db.add(usuario)
+    db.commit()
+    db.refresh(usuario)
+    return usuario

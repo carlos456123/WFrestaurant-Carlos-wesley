@@ -11,7 +11,8 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type:   str = "bearer"
-    nome:         str   # nome do usuário para exibir na navbar
+    nome:         str
+    role:         str  # "admin" ou "usuario"
 
 
 # ── PRODUTO ──────────────────────────────────────────────
@@ -85,3 +86,18 @@ class PedidoPaginado(BaseModel):
     page:  int
     limit: int
     pages: int
+
+
+# ── USUARIO ──────────────────────────────────────────────
+
+class UsuarioCreate(BaseModel):
+    nome:  str
+    email: str
+    senha: str
+
+class UsuarioResponse(BaseModel):
+    id:    int
+    nome:  str
+    email: str
+    role:  str
+    model_config = ConfigDict(from_attributes=True)

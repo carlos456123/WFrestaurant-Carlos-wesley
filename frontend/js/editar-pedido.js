@@ -12,7 +12,7 @@ $.get(`${API}/produtos`, function(lista) {
     
     carregarPedido();
 
-}).fail(() => avisar("Erro ao carregar produtos."));
+}).fail(() => avisar("Erro ao carregar produtos.", "danger"));
 
 function carregarPedido() {
     $.get(`${API}/pedidos/${id}`, function(p) {
@@ -23,7 +23,7 @@ function carregarPedido() {
         $("#valor_total").val(p.valor_total);
         $("#status").val(p.status);
     }).fail(() => {
-        avisar("Pedido não encontrado.");
+        avisar("Pedido não encontrado.", "danger");
         window.location.href = "pedidos.html";
     });
 }
@@ -39,7 +39,7 @@ function salvar() {
     };
 
     if (!dados.nome_cliente || !dados.telefone || !dados.produto_id) {
-        avisar("Preencha todos os campos!");
+        avisar("Preencha todos os campos!", "warning");
         return;
     }
 
@@ -53,12 +53,12 @@ function salvar() {
         headers: authHeader(),
         data: JSON.stringify(dados),
         success() {
-            avisar("Pedido atualizado!");
+            avisar("Pedido atualizado!", "success");
             window.location.href = "pedidos.html";
         },
         error(xhr) {
-            if (xhr.status === 401) { avisar("Sessão expirada."); sair("../"); }
-            else { avisar("Erro ao atualizar pedido."); }
+            if (xhr.status === 401) { avisar("Sessão expirada.", "danger"); sair("../"); }
+            else { avisar("Erro ao atualizar pedido.", "danger"); }
             $("#btn-salvar").prop("disabled", false).text("Salvar Alterações");
         }
     });

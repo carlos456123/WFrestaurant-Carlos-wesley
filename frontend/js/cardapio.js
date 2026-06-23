@@ -30,7 +30,7 @@ function carregar() {
         });
         if (!html) html = `<div class="col"><p class="text-muted">Nenhum produto disponível.</p></div>`;
         $("#lista").html(html);
-    }).fail(() => avisar("Erro ao carregar cardápio."));
+    }).fail(() => avisar("Erro ao carregar cardápio.", "danger"));
 }
 
 function atualizarPedido() {
@@ -74,7 +74,7 @@ $("#btn-confirmar").on("click", function() {
     const telefone     = $("#cli-telefone").val().trim();
 
     if (!nome_cliente || !telefone) {
-        avisar("Preencha nome e telefone!");
+        avisar("Preencha nome e telefone!", "warning");
         return;
     }
 
@@ -99,15 +99,15 @@ $("#btn-confirmar").on("click", function() {
             bootstrap.Modal.getInstance(document.getElementById("modal-pedido")).hide();
             pedido = [];
             atualizarPedido();
-            avisar(`Pedido de ${nome_cliente} registrado!`);
+            avisar(`Pedido de ${nome_cliente} registrado!`, "success");
             $("#cli-nome, #cli-telefone").val("");
         })
         .fail(xhr => {
             if (xhr.status === 401) {
-                avisar("Sessão expirada. Faça login novamente.");
+                avisar("Sessão expirada. Faça login novamente.", "danger");
                 sair("");
             } else {
-                avisar("Erro ao registrar pedido.");
+                avisar("Erro ao registrar pedido.", "danger");
             }
         });
 });

@@ -8,6 +8,7 @@ from auth import autenticar_usuario, criar_token, verificar_token
 from database import Base, engine, get_db
 from schemas import (
     LoginRequest, TokenResponse,
+    UsuarioCreate, UsuarioResponse,
     ProdutoCreate, ProdutoUpdate, ProdutoResponse, ProdutoPaginado,
     PedidoCreate, PedidoUpdate, PedidoResponse, PedidoPaginado
 )
@@ -34,8 +35,22 @@ def login(dados: LoginRequest, db: Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Email ou senha incorretos."
         )
-    token = criar_token({"sub": usuario.email, "nome": usuario.nome})
-    return {"access_token": token, "token_type": "bearer", "nome": usuario.nome}
+    token = criar_token({"sub": usuario.email, "nome": usuario.nome, "role": usuario.role})
+    return {"access_token": token, "token_type": "bearer", "nome": usuario.nome, "role": usuario.role}
+
+
+# ── USUARIOS ─────────────────────────────────────────────
+
+# Cadastro público — qualquer pessoa pode criar uma conta
+@app.post("/usuarios", response_model=UsuarioResponse, status_code=201)
+def criar_usuario(dados: UsuarioCreate, db: Session = Depends(get_db)):
+    resultado = crud.criar_usuario(db, dados)
+    if resultado == "email_duplicado":
+        raise HTTPException(
+            status_code=409,
+            detail="Este email já está cadastrado. Tente fazer login."
+        )
+    return resultado
 
 
 # ── PRODUTOS ─────────────────────────────────────────────
@@ -82,7 +97,7 @@ def atualizar_produto(
 def deletar_produto(
     produto_id: int,
     db:         Session = Depends(get_db),
-    
+    _:          dict    = Depends(verificar_token)
 ):
     produto = crud.deletar_produto(db, produto_id)
     if not produto:

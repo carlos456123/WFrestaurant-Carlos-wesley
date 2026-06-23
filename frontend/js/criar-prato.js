@@ -10,7 +10,7 @@ $("#form-criar").on("submit", function(e) {
     };
 
     if (!dados.nome || isNaN(dados.preco)) {
-        avisar("Preencha nome e preço!");
+        avisar("Preencha nome e preço!", "warning");
         return;
     }
 
@@ -21,12 +21,12 @@ $("#form-criar").on("submit", function(e) {
         headers: authHeader(),
         data: JSON.stringify(dados),
         success() {
-            avisar("Prato criado!");
+            avisar("Prato criado!", "success");
             window.location.href = "cardapio-admin.html";
         },
         error(xhr) {
-            if (xhr.status === 401) { avisar("Sessão expirada."); sair("../"); }
-            else { avisar("Erro ao criar prato!"); }
+            if (xhr.status === 401) { avisar("Sessão expirada.", "danger"); sair("../"); }
+            else { avisar("Erro ao criar prato!", "danger"); }
         }
     });
 });

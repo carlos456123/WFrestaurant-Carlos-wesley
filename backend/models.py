@@ -10,6 +10,7 @@ class Usuario(Base):
     nome       = Column(String, nullable=False)
     email      = Column(String, unique=True, nullable=False, index=True)
     senha_hash = Column(String, nullable=False)
+    role       = Column(String, default="usuario")  # "admin" ou "usuario"
 
 
 class Produto(Base):
@@ -21,7 +22,6 @@ class Produto(Base):
     preco      = Column(Float, nullable=False)
     disponivel = Column(Boolean, default=True)
     imagem     = Column(String, default="")
-
 
     pedidos = relationship("Pedido", back_populates="produto_rel")
 
@@ -36,8 +36,5 @@ class Pedido(Base):
     valor_total  = Column(Float, nullable=False)
     status       = Column(String, default="Preparando")
 
-    # Chave estrangeira apontando para produtos.id
     produto_id   = Column(Integer, ForeignKey("produtos.id"), nullable=False)
-
-    # Relacionamento — carrega o objeto Produto completo
     produto_rel  = relationship("Produto", back_populates="pedidos")

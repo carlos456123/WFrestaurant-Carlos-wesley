@@ -8,7 +8,7 @@ $.get(`${API}/produtos/${id}`, function(p) {
     $("#preco").val(p.preco);
     $("#disponivel").val(String(p.disponivel));
 }).fail(() => {
-    avisar("Prato não encontrado.");
+    avisar("Prato não encontrado.", "danger");
     window.location.href = "cardapio-admin.html";
 });
 
@@ -22,7 +22,7 @@ function salvar() {
     };
 
     if (!dados.nome || isNaN(dados.preco)) {
-        avisar("Preencha nome e preço!");
+        avisar("Preencha nome e preço!", "warning");
         return;
     }
 
@@ -36,12 +36,12 @@ function salvar() {
         headers: authHeader(),
         data: JSON.stringify(dados),
         success() {
-            avisar("Prato atualizado!");
+            avisar("Prato atualizado!", "success");
             window.location.href = "cardapio-admin.html";
         },
         error(xhr) {
-            if (xhr.status === 401) { avisar("Sessão expirada."); sair("../"); }
-            else { avisar("Erro ao atualizar prato."); }
+            if (xhr.status === 401) { avisar("Sessão expirada.", "danger"); sair("../"); }
+            else { avisar("Erro ao atualizar prato.", "danger"); }
             $("#btn-salvar").prop("disabled", false).text("Salvar Alterações");
         }
     });

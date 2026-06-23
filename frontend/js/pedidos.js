@@ -29,7 +29,7 @@ function carregar(page = 1) {
                 <td>${badgeStatus(p.status)}</td>
                 <td>
                     <a href="editar-pedido.html?id=${p.id}" class="btn btn-outline-secondary btn-sm me-1">Editar</a>
-                    <button class="btn btn-outline-danger btn-sm btn-excluir" data-id="${p.id}">Excluir</button>
+                    <button class="btn btn-outline-danger btn-sm btn-excluir" data-id="${p.id}" data-nome="${p.nome_cliente}">Excluir</button>
                 </td>
             </tr>`;
         });
@@ -68,6 +68,7 @@ function renderPaginacao(res) {
 // ── DELETE ───────────────────────────────────────────────
 $(document).on("click", ".btn-excluir", function() {
     delId = $(this).data("id");
+    $("#del-nome").text($(this).data("nome"));
     modal.show();
 });
 
@@ -76,10 +77,14 @@ $("#btn-del").on("click", function() {
         url: `${API}/pedidos/${delId}`,
         method: "DELETE",
         headers: authHeader(),
-        success() { modal.hide(); carregar(paginaAtual); },
+        success() {
+            modal.hide();
+            avisar("Pedido excluído com sucesso!", "success");
+            carregar(paginaAtual);
+        },
         error(xhr) {
-            if (xhr.status === 401) { avisar("Sessão expirada."); sair("../"); }
-            else { avisar("Erro ao excluir pedido."); }
+            if (xhr.status === 401) { avisar("Sessão expirada.", "danger"); sair("../"); }
+            else { avisar("Erro ao excluir pedido.", "danger"); }
         }
     });
 });

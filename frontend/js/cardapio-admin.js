@@ -36,7 +36,7 @@ function carregar(page = 1) {
                 <td>${badgeDisponivel(p.disponivel)}</td>
                 <td>
                     <a href="editar-prato.html?id=${p.id}" class="btn btn-outline-secondary btn-sm me-1">Editar</a>
-                    <button class="btn btn-outline-danger btn-sm btn-excluir" data-id="${p.id}">Excluir</button>
+                    <button class="btn btn-outline-danger btn-sm btn-excluir" data-id="${p.id}" data-nome="${p.nome}">Excluir</button>
                 </td>
             </tr>`;
         });
@@ -89,6 +89,7 @@ function limparBusca() {
 // ── DELETE ───────────────────────────────────────────────
 $(document).on("click", ".btn-excluir", function() {
     delId = $(this).data("id");
+    $("#del-nome").text($(this).data("nome"));
     modal.show();
 });
 
@@ -99,11 +100,12 @@ $("#btn-del").on("click", function() {
         headers: authHeader(),
         success() {
             modal.hide();
+            avisar("Prato excluído com sucesso!", "success");
             carregar(paginaAtual);
         },
         error(xhr) {
-            if (xhr.status === 401) { avisar("Sessão expirada."); sair("../"); }
-            else { avisar("Erro ao excluir prato."); }
+            if (xhr.status === 401) { avisar("Sessão expirada.", "danger"); sair("../"); }
+            else { avisar("Erro ao excluir prato.", "danger"); }
         }
     });
 });

@@ -1,7 +1,47 @@
 const API = "http://localhost:8000";
 
 // ── FUNÇÕES GERAIS ───────────────────────────────────────
-function avisar(msg) { alert(msg); }
+
+// ── TOASTS (Bootstrap) ────────────────────────────────────
+// Container fixo no canto inferior direito, criado sob demanda.
+function garantirToastContainer() {
+    if (!$("#toast-container").length) {
+        $("body").append(
+            '<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;"></div>'
+        );
+    }
+}
+
+// Substitui o antigo alert(). Uso: avisar("mensagem", "success"|"danger"|"warning"|"info")
+function avisar(msg, tipo = "info") {
+    garantirToastContainer();
+
+    const cores = {
+        success: "text-bg-success",
+        danger:  "text-bg-danger",
+        warning: "text-bg-warning",
+        info:    "text-bg-info"
+    };
+    const classeCor = cores[tipo] || cores.info;
+    const id = `toast-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+    const html = `
+        <div id="${id}" class="toast align-items-center ${classeCor} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">${msg}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>`;
+
+    $("#toast-container").append(html);
+
+    const elEl = document.getElementById(id);
+    const toast = new bootstrap.Toast(elEl, { delay: 4000 });
+    toast.show();
+
+    // Remove do DOM depois que sumir, pra não acumular elementos escondidos
+    elEl.addEventListener("hidden.bs.toast", () => elEl.remove());
+}
 
 function formatarPreco(valor) {
     return `R$ ${parseFloat(valor).toFixed(2)}`;
