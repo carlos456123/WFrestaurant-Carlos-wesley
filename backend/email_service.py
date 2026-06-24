@@ -9,7 +9,7 @@ MAIL_USERNAME = os.getenv("MAIL_USERNAME")
 MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 MAIL_FROM     = os.getenv("MAIL_FROM")
 MAIL_SERVER   = "smtp.gmail.com"
-MAIL_PORT     = 587
+MAIL_PORT     = 465
 
 
 # ── FUNÇÃO INTERNA DE ENVIO ──────────────────────────────
@@ -22,8 +22,8 @@ def _enviar(destinatario: str, assunto: str, corpo_html: str):
 
         msg.attach(MIMEText(corpo_html, "html"))
 
-        with smtplib.SMTP(MAIL_SERVER, MAIL_PORT) as servidor:
-            servidor.starttls()
+        # Porta 465 usa SSL direto (sem starttls)
+        with smtplib.SMTP_SSL(MAIL_SERVER, MAIL_PORT) as servidor:
             servidor.login(MAIL_USERNAME, MAIL_PASSWORD)
             servidor.sendmail(MAIL_FROM, destinatario, msg.as_string())
 
