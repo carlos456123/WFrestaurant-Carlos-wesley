@@ -1,9 +1,14 @@
+import os
 from typing import Optional
-from fastapi import Depends, FastAPI, HTTPException, Query, status
+from dotenv import load_dotenv
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query, status
+
+load_dotenv()  # carrega o .env automaticamente
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 import crud
+from email_service import enviar_boas_vindas
 from auth import autenticar_usuario, criar_token, verificar_token
 from database import Base, engine, get_db
 from schemas import (
@@ -43,13 +48,15 @@ def login(dados: LoginRequest, db: Session = Depends(get_db)):
 
 # Cadastro público — qualquer pessoa pode criar uma conta
 @app.post("/usuarios", response_model=UsuarioResponse, status_code=201)
-def criar_usuario(dados: UsuarioCreate, db: Session = Depends(get_db)):
+def criar_usuario(dados: UsuarioCreate, background: BackgroundTasks, db: Session = Depends(get_db)):
     resultado = crud.criar_usuario(db, dados)
     if resultado == "email_duplicado":
         raise HTTPException(
             status_code=409,
             detail="Este email já está cadastrado. Tente fazer login."
         )
+    # Envia email de boas-vindas em background
+    enviar_boas_vindas(background, resultado.nome, resultado.email)
     return resultado
 
 
@@ -77,7 +84,7 @@ def buscar_produto(produto_id: int, db: Session = Depends(get_db)):
 def criar_produto(
     dados: ProdutoCreate,
     db:    Session = Depends(get_db),
-    
+    _:     dict    = Depends(verificar_token)
 ):
     return crud.criar_produto(db, dados)
 
