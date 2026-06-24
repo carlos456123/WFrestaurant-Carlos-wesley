@@ -1,165 +1,160 @@
 # 🍽️ WF Restaurant
 
-Sistema de gerenciamento de pedidos e cardápio para restaurante.
+Sistema de gestão de restaurante desenvolvido com FastAPI e JavaScript puro.
+
+🔗 **[Acessar o sistema](https://carlos456123.github.io/WFrestaurant-Carlos-wesley/)**
 
 ---
 
-## 🛠️ Tecnologias usadas
+## 🌐 URLs em produção
+
+| Serviço | URL |
+|---------|-----|
+| Frontend | https://carlos456123.github.io/WFrestaurant-Carlos-wesley/ |
+| Backend | https://wfrestaurant-backend.onrender.com |
+| Documentação API | https://wfrestaurant-backend.onrender.com/docs |
+
+> ⚠️ O backend usa o plano gratuito do Render. A primeira requisição após inatividade pode demorar ~30 segundos (cold start). Isso é normal.
+
+---
+
+## 🛠️ Tecnologias
 
 **Backend**
-- Python + FastAPI
-- SQLAlchemy (ORM)
-- SQLite (banco de dados)
-- python-jose (JWT)
+- Python 3.13 + FastAPI
+- SQLAlchemy + SQLite
+- JWT (python-jose)
 - bcrypt (hash de senha)
+- python-dotenv
 
 **Frontend**
-- HTML + CSS
-- Bootstrap 5
+- HTML + CSS + Bootstrap 5
 - jQuery
 
 ---
 
-## 📁 Estrutura do projeto
+## 📁 Estrutura
 
 ```
-projeto/
-│
+projeto-web/
 ├── backend/
-│   ├── main.py        ← Rotas da API
-│   ├── models.py      ← Tabelas do banco (Usuario, Produto, Pedido)
-│   ├── schemas.py     ← Validação e formato dos dados
-│   ├── crud.py        ← Operações no banco (busca, paginação)
-│   ├── auth.py        ← JWT e hash de senha
-│   ├── database.py    ← Conexão com o SQLite
-│   └── seed.py        ← Cria o usuário admin no banco
+│   ├── main.py          ← Rotas da API
+│   ├── models.py        ← Tabelas do banco
+│   ├── schemas.py       ← Validação dos dados
+│   ├── crud.py          ← Operações no banco
+│   ├── auth.py          ← JWT e hash de senha
+│   ├── email_service.py ← Envio de email
+│   ├── database.py      ← Conexão com SQLite
+│   ├── seed.py          ← Cria usuário admin
+│   └── requirements.txt
 │
 └── frontend/
-    ├── index.html         ← Cardápio do cliente + fazer pedido
-    ├── login.html         ← Tela de login
-    ├── style.css          ← Estilos globais
-    │
+    ├── login.html
+    ├── cadastro.html
+    ├── index.html       ← Cardápio do cliente
+    ├── style.css
     ├── js/
-    │   ├── utils.js           ← Funções compartilhadas (auth, sidebar, helpers)
-    │   ├── cardapio.js        ← Lógica do cardápio do cliente
-    │   ├── cardapio-admin.js  ← Lógica do gerenciamento + busca + paginação
-    │   ├── pedidos.js         ← Lógica da listagem de pedidos + paginação
-    │   ├── criar-prato.js     ← Lógica do formulário de criar prato
-    │   ├── editar-prato.js    ← Lógica do formulário de editar prato
-    │   └── editar-pedido.js   ← Lógica do formulário de editar pedido
-    │
+    │   ├── utils.js
+    │   ├── cardapio.js
+    │   ├── cardapio-admin.js
+    │   ├── pedidos.js
+    │   ├── criar-prato.js
+    │   ├── editar-prato.js
+    │   └── editar-pedido.js
     └── pages/
-        ├── pedidos.html          ← Listagem de pedidos
-        ├── cardapio-admin.html   ← Gerenciar cardápio (admin)
-        ├── criar-prato.html      ← Cadastrar novo prato
-        ├── editar-prato.html     ← Editar prato existente
-        └── editar-pedido.html    ← Editar pedido existente
+        ├── pedidos.html
+        ├── cardapio-admin.html
+        ├── criar-prato.html
+        ├── editar-prato.html
+        └── editar-pedido.html
 ```
 
 ---
 
-## ▶️ Como rodar
+## ▶️ Como rodar localmente
 
-### 1. Instalar dependências do backend
-
-Abra o terminal na pasta `backend/` e execute:
+### 1. Instalar dependências
 
 ```bash
-pip install fastapi uvicorn sqlalchemy python-jose[cryptography] bcrypt==4.0.1
+cd backend
+pip install -r requirements.txt
 ```
 
-### 2. Criar o usuário admin
+### 2. Configurar variáveis de ambiente
 
-Ainda na pasta `backend/`, execute o seed **uma única vez**:
+Cria o arquivo `backend/.env`:
+
+```
+MAIL_USERNAME=seuemail@gmail.com
+MAIL_PASSWORD=sua_senha_de_app
+MAIL_FROM=seuemail@gmail.com
+```
+
+### 3. Criar o usuário admin
 
 ```bash
+cd backend
 python seed.py
 ```
 
-Isso cria o usuário administrador no banco. Credenciais:
-- **Email:** `admin@wf.com`
-- **Senha:** `admin123`
-
-### 3. Iniciar o servidor
+### 4. Iniciar o servidor
 
 ```bash
 uvicorn main:app --reload
 ```
 
-O servidor vai rodar em: `http://localhost:8000`
+### 5. Abrir o frontend
 
-Para verificar as rotas disponíveis, acesse:
-```
-http://localhost:8000/docs
-```
-
-### 4. Abrir o frontend
-
-Abra o arquivo `frontend/login.html` no navegador e faça login
-com as credenciais acima.
-
-> ⚠️ O backend precisa estar rodando antes de abrir o frontend.
+Abre `frontend/login.html` no navegador.
 
 ---
 
-## 🔁 Fluxo do sistema
+## 🔑 Credenciais de teste
 
-1. Acesse `login.html` e faça login com `admin@wf.com` / `admin123`
-2. No **Cardápio** (`index.html`) veja os pratos disponíveis
-3. Clique em **Adicionar ao Pedido** e depois em **Finalizar Pedido**
-4. Informe nome e telefone do cliente para confirmar
-5. O pedido aparece em **Pedidos** com status `Preparando`
-6. Em **Gerenciar Cardápio** é possível buscar, editar e excluir pratos
-7. Em **Novo Prato** cadastre novos itens no cardápio
-8. Clique em **Sair** na sidebar para encerrar a sessão
+| Campo | Valor |
+|-------|-------|
+| Email | admin@wf.com |
+| Senha | xxxxxx |
+| Role  | admin |
 
 ---
 
 ## 🔗 Rotas da API
 
 ### Autenticação
-
-| Método | Rota | Proteção | Descrição |
-|--------|------|----------|-----------|
-| POST | /login | Pública | Retorna token JWT |
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | /login | Retorna token JWT |
+| POST | /usuarios | Cadastro de novo usuário |
 
 ### Produtos
-
 | Método | Rota | Proteção | Descrição |
 |--------|------|----------|-----------|
-| GET | /produtos | Pública | Lista produtos (com busca e paginação) |
-| GET | /produtos/{id} | Pública | Busca produto por ID |
+| GET | /produtos | Pública | Lista com busca e paginação |
+| GET | /produtos/{id} | Pública | Busca por ID |
 | POST | /produtos | 🔒 JWT | Cria produto |
 | PUT | /produtos/{id} | 🔒 JWT | Atualiza produto |
 | DELETE | /produtos/{id} | 🔒 JWT | Remove produto |
 
 ### Pedidos
-
 | Método | Rota | Proteção | Descrição |
 |--------|------|----------|-----------|
-| GET | /pedidos | Pública | Lista pedidos (com paginação) |
-| GET | /pedidos/{id} | Pública | Busca pedido por ID |
+| GET | /pedidos | Pública | Lista com paginação |
+| GET | /pedidos/{id} | Pública | Busca por ID |
 | POST | /pedidos | 🔒 JWT | Cria pedido |
 | PUT | /pedidos/{id} | 🔒 JWT | Atualiza pedido |
 | DELETE | /pedidos/{id} | 🔒 JWT | Remove pedido |
 
----
-
-## 🔍 Query Parameters disponíveis
-
+### Query Parameters
 ```
-GET /produtos?nome=frango          → busca por nome (parcial, sem case)
-GET /produtos?page=1&limit=8       → paginação (8 por página)
-GET /produtos?nome=frang&page=2    → busca + paginação juntas
-
-GET /pedidos?page=1&limit=10       → paginação (10 por página)
+GET /produtos?nome=frango        → busca por nome
+GET /produtos?page=1&limit=8     → paginação
+GET /pedidos?page=1&limit=10     → paginação
 ```
 
 ---
 
 ## 🗄️ Banco de dados
-
-O sistema usa SQLite com 3 tabelas relacionadas:
 
 ```
 usuarios          produtos              pedidos
@@ -167,11 +162,8 @@ usuarios          produtos              pedidos
 id (PK)           id (PK)               id (PK)
 nome              nome                  nome_cliente
 email (unique)    descricao             telefone
-senha_hash        preco                 produto_id (FK → produtos.id)
-                  disponivel            quantidade
+senha_hash        preco                 produto_id (FK)
+role              disponivel            quantidade
                   imagem                valor_total
                                         status
 ```
-
-O campo `produto_id` na tabela `pedidos` é uma **chave estrangeira (FK)**
-que garante que todo pedido está vinculado a um produto válido.
