@@ -84,7 +84,7 @@ def buscar_produto(produto_id: int, db: Session = Depends(get_db)):
 def criar_produto(
     dados: ProdutoCreate,
     db:    Session = Depends(get_db),
-    
+    _:     dict    = Depends(verificar_token)
 ):
     return crud.criar_produto(db, dados)
 
